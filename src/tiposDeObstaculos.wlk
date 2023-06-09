@@ -1,0 +1,2 @@
+object pared{}
+object trampa{}

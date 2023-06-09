@@ -1,8 +1,55 @@
 import wollok.game.*
-import pepita.*
+import jugador.*
+import obstaculos.*
+import tiposDeObstaculos.*
+import hud.*
 
 program juego {
 	game.title("Juego Base")
-	game.addVisual(pepita)
+	game.height(10)
+	game.width(10)
+	const p1 = new BloquePared(position = new Position(x=2,y=3))
+	const p2 = new BloquePared(position = new Position(x=3,y=3))
+	const p3 = new BloquePared(position = new Position(x=4,y=3))
+	const m1 = new Pinche(position = new Position(x=6,y=6))
+	var j1 = new Jugador()
+	game.addVisual(p1)
+	game.addVisual(p2)
+	game.addVisual(p3)
+	game.addVisual(m1)
+	game.addVisual(j1)
+	cantidadVida.texto(j1.getVidas())
+	game.addVisual(cantidadVida)
+	game.addVisual(visualVida)
+
+	game.onCollideDo(j1, {o => 
+		if(o.tipo() == trampa){
+			j1.movimientoPermitido(false)
+			game.schedule(300, {
+				j1.image("player"+j1.vista()+"Daño.png")
+				j1.position(j1.posicionAnterior())
+			})
+			game.schedule(600, {
+				j1.movimientoPermitido(true)
+				j1.image("player"+j1.vista()+".png")
+				if(j1.getVidas() == 0){
+					const visuales = game.allVisuals()
+					visuales.forEach({v=>game.removeVisual(v)})
+				}
+			})
+			game.removeVisual(cantidadVida)
+			j1.perderUnaVida()
+			cantidadVida.texto(j1.getVidas())
+			game.addVisual(cantidadVida)
+		}
+	})
+	
+	
+	keyboard.w().onPressDo({j1.moverArriba()})
+	keyboard.a().onPressDo({j1.moverIzquierda()})
+	keyboard.s().onPressDo({j1.moverAbajo()})
+	keyboard.d().onPressDo({j1.moverDerecha()})
+	
+	
 	game.start()
 }
