@@ -3,38 +3,55 @@ import jugador.*
 import obstaculos.*
 import tiposDeObstaculos.*
 import hud.*
+import sonidos.*
 
 program juego {
 	game.title("Juego Base")
-	game.height(10)
-	game.width(10)
-	const p1 = new BloquePared(position = new Position(x=2,y=3))
-	const p2 = new BloquePared(position = new Position(x=3,y=3))
-	const p3 = new BloquePared(position = new Position(x=4,y=3))
-	const m1 = new Pinche(position = new Position(x=6,y=6))
-	var j1 = new Jugador()
-	game.addVisual(p1)
-	game.addVisual(p2)
-	game.addVisual(p3)
+	game.height(18)
+	game.width(28)
+	game.boardGround("piso-pasillo.png")
+		
+	const j1 = new Jugador()
+	
+	(0..17).forEach({posY =>
+		game.addVisual(new BloquePared(position = new Position(x=6,y=posY)))
+		game.addVisual(new BloquePared(position = new Position(x=21,y=posY)))
+	})
+
+	const m1 = new Pinche(position = new Position(x=9,y=8))
+	const crtlMrt = new CartelMuerte(position = game.origin())
+	const caja1 = new CajaMadera(position = game.center())
+	
 	game.addVisual(m1)
 	game.addVisual(j1)
+	game.addVisual(caja1)
+	
 	cantidadVida.texto(j1.getVidas())
 	game.addVisual(cantidadVida)
 	game.addVisual(visualVida)
+	
+	var estaEnCartelFinal = false
+
 
 	game.onCollideDo(j1, {o => 
 		if(o.tipo() == trampa){
 			j1.movimientoPermitido(false)
+			ouh.play()
 			game.schedule(300, {
-				j1.image("player"+j1.vista()+"Daño.png")
+				j1.image("player"+j1.vistaActual()+"Daño.png")
 				j1.position(j1.posicionAnterior())
+				if(j1.cajaEncima() != null){
+					caja1.position(j1.posicionAnterior())
+				} 
 			})
 			game.schedule(600, {
 				j1.movimientoPermitido(true)
-				j1.image("player"+j1.vista()+".png")
+				j1.image("player"+j1.vistaActual()+".png")
 				if(j1.getVidas() == 0){
+					estaEnCartelFinal = true
 					const visuales = game.allVisuals()
 					visuales.forEach({v=>game.removeVisual(v)})
+					game.addVisual(crtlMrt)
 				}
 			})
 			game.removeVisual(cantidadVida)
@@ -44,11 +61,48 @@ program juego {
 		}
 	})
 	
+	keyboard.k().onPressDo({
+		if(estaEnCartelFinal){
+			game.removeVisual(crtlMrt)
+			j1.position(game.center())
+			j1.setVidas(3)
+			cantidadVida.texto(j1.getVidas())
+			game.addVisual(cantidadVida)
+			game.addVisual(visualVida)
+			game.addVisual(m1)
+			game.addVisual(j1)
+			(0..17).forEach({posY =>
+				game.addVisual(new BloquePared(position = new Position(x=6,y=posY)))
+				game.addVisual(new BloquePared(position = new Position(x=21,y=posY)))
+			})
+			estaEnCartelFinal = false
+			game.boardGround("piso-pasillo.png")
+		}
+	})
+	
+	keyboard.j().onPressDo({
+		if(estaEnCartelFinal){
+			game.stop()
+		}
+	})
+
 	
 	keyboard.w().onPressDo({j1.moverArriba()})
 	keyboard.a().onPressDo({j1.moverIzquierda()})
 	keyboard.s().onPressDo({j1.moverAbajo()})
 	keyboard.d().onPressDo({j1.moverDerecha()})
+	
+	keyboard.c().onPressDo({
+		if(!estaEnCartelFinal and j1.movimientoPermitido()){
+			if(j1.cajaEncima() == null){
+				j1.cajaEncima(game.colliders(j1).first())
+				game.removeVisual(caja1)
+			} else{
+				j1.cajaEncima(null)
+				game.addVisual(caja1)
+			}
+		}
+	})
 	
 	
 	game.start()
