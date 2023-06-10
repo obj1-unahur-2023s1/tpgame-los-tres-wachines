@@ -10,16 +10,20 @@ class Jugador {
 	var property posicionAnterior = position
 	var property vistaActual = "Der"
 	var property vistaAnterior = "Der"
-	var vidas = 3
 	var property cajaEncima = null
+	var vidas = 3
 	
-	method image() = image
+	// --- MOVIMIENTO ---
 	
 	method moverArriba(){
 		if(movimientoPermitido){
 			vistaActual = "Arriba"
 			image = "playerArriba.png"
-			if(movimientoPermitido and !self.hayObstaculo_Adelante(pared) and vistaAnterior == vistaActual){
+			if(cajaEncima != null){
+				image = "playerArribaCaja.png"
+				
+				}
+			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().y() < game.height()-2){
 				posicionAnterior = position
 				position = position.up(1)
 				if(cajaEncima != null){
@@ -31,9 +35,13 @@ class Jugador {
 	}
 	method moverDerecha(){
 		if(movimientoPermitido){
-			image = "playerDer.png"
 			vistaActual = "Der"
-			if(movimientoPermitido and !self.hayObstaculo_Adelante(pared) and vistaAnterior == vistaActual){
+			image = "playerDer.png"
+			if(cajaEncima != null){
+				image = "playerDerCaja.png"
+				
+				}
+			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().x() < game.width()-2){
 				posicionAnterior = position
 				position = position.right(1)
 				if(cajaEncima != null){
@@ -45,9 +53,13 @@ class Jugador {
 	}
 	method moverIzquierda(){
 		if(movimientoPermitido){
-			image = "playerIzq.png"
 			vistaActual = "Izq"
-			if(!self.hayObstaculo_Adelante(pared) and vistaAnterior == vistaActual){
+			image = "playerIzq.png"
+			if(cajaEncima != null){
+				image = "playerIzqCaja.png"
+				
+				}
+			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().x() > 1){
 				posicionAnterior = position
 				position = position.left(1)
 				if(cajaEncima != null){
@@ -59,9 +71,13 @@ class Jugador {
 	}
 	method moverAbajo(){
 		if(movimientoPermitido){
-			image = "playerAbajo.png"
 			vistaActual = "Abajo"
-			if(!self.hayObstaculo_Adelante(pared) and vistaAnterior == vistaActual){
+			image = "playerAbajo.png"
+			if(cajaEncima != null){
+				image = "playerAbajoCaja.png"
+				
+				}
+			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().y() > 1){
 				posicionAnterior = position
 				position = position.down(1)
 				if(cajaEncima != null){
@@ -73,17 +89,22 @@ class Jugador {
 	}
 	
 	method hayObstaculo_Adelante(tipo){
-		if(vistaActual == "Der"){			
-			return game.getObjectsIn(new Position (x = self.position().x()+1, y = self.position().y())).any({o=>o.tipo() == tipo })
+		var sumaX = 0
+		var sumaY = 0
+		if(vistaActual == "Der"){
+			sumaX = 1			
 		}else if(vistaActual == "Izq"){
-			return game.getObjectsIn(new Position (x = self.position().x()-1, y = self.position().y())).any({o=>o.tipo() == tipo })
+			sumaX = -1
 		}else if(vistaActual == "Arriba"){
-			return game.getObjectsIn(new Position (x = self.position().x(), y = self.position().y()+1)).any({o=>o.tipo() == tipo })
-		}else {
-			return game.getObjectsIn(new Position (x = self.position().x(), y = self.position().y()-1)).any({o=>o.tipo() == tipo })
+			sumaY = 1
+		}else{
+			sumaY = -1
 		}
+		return game.getObjectsIn(new Position(x = self.position().x()+sumaX, y = self.position().y()+sumaY)).any({o=>o.tipo() == tipo })
 	}
 	
+	// --- VIDAS ---
+
 	method getVidas() = vidas
 	method setVidas(cantVidas) {vidas = cantVidas}
 	method perderUnaVida() {vidas = 0.max(vidas-1)}

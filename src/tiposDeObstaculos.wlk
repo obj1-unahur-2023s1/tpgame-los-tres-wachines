@@ -1,3 +1,5 @@
-object pared{}
-object trampa{}
-object caja{}
+object bloqueSolido{}
+object objetoPeligroso{}
+object objetoMovible{}
+object bloqueCaminable{}
+object puerta{}

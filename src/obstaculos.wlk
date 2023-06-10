@@ -1,26 +1,44 @@
 import tiposDeObstaculos.*
+import wollok.game.*
 
-class BloquePared{
+class Pared{
 	var property position
-	var property image = "pared.png"
-	var property tipo = pared
+	var property image
+	method tipo() = bloqueSolido
 }
 
-class Pinche {
-	var property image = "malo.png"
+class Trampa {
+	var property image = "pincheCerrado.png"
 	var property position
-	var property tipo = trampa
+	method tipo() = objetoPeligroso
+	method id() = "trampa" 
+}
+
+class BolaPlasma inherits Trampa{
+	override method id() = "bolaPlasma"
 }
 
 class CartelMuerte{
 	var property image = "ct2.png"
-	var property position
-	var property tipo = pared
+	var property position = game.origin()
+	method tipo() = bloqueSolido
 }
 
 class CajaMadera{
-	var property image = "caja2.png"
 	var property position
-	var property tipo = caja 
-	var property estaSiendoAgarrada = false
+	method image() = "caja2.png"
+	method tipo() = objetoMovible 
+}
+
+class Puerta{
+	var property id
+	var property position
+	var property image
+	method tipo() = puerta
+}
+
+class Decoracion{
+	var property position
+	var property image
+	method tipo() = bloqueCaminable
 }

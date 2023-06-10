@@ -6,20 +6,30 @@ import hud.*
 import sonidos.*
 
 program juego {
-	game.title("Juego Base")
+	
+	game.title("Haunted Mansion")
 	game.height(18)
 	game.width(28)
-	game.boardGround("piso-pasillo.png")
-		
+	game.boardGround("pisoBase.png")
+	var lugar = "pasillo"
+	var posJugadorEnPasillo
+	var fragmentosConseguidos = 0
 	const j1 = new Jugador()
+	game.addVisual(bordeNegro)
 	
-	(0..17).forEach({posY =>
-		game.addVisual(new BloquePared(position = new Position(x=6,y=posY)))
-		game.addVisual(new BloquePared(position = new Position(x=21,y=posY)))
+	(1..16).forEach({posY =>
+		var id = 1
+		game.addVisual(new Pared(position = new Position(x=6,y=posY),image = "paredIzq.png"))
+		game.addVisual(new Pared(position = new Position(x=21,y=posY),image = "paredDer.png"))
+		if(posY%4==0 and posY<16){
+			game.addVisual(new Puerta(position = new Position(x=6,y=posY),image = "puertaCostadoIzq.png", id = id))
+			game.addVisual(new Puerta(position = new Position(x=21,y=posY),image = "puertaCostadoDer.png", id = id+3))
+			id++
+		}
 	})
-
-	const m1 = new Pinche(position = new Position(x=9,y=8))
-	const crtlMrt = new CartelMuerte(position = game.origin())
+		
+	const m1 = new Trampa(position = new Position(x=9,y=8))
+	const crtlMrt = new CartelMuerte()
 	const caja1 = new CajaMadera(position = game.center())
 	
 	game.addVisual(m1)
@@ -34,7 +44,10 @@ program juego {
 
 
 	game.onCollideDo(j1, {o => 
-		if(o.tipo() == trampa){
+		if(o.tipo() == objetoPeligroso){
+			if(o.id() == "trampa"){
+				o.image("pincheAbierto.png")
+			}
 			j1.movimientoPermitido(false)
 			ouh.play()
 			game.schedule(300, {
@@ -42,26 +55,84 @@ program juego {
 				j1.position(j1.posicionAnterior())
 				if(j1.cajaEncima() != null){
 					caja1.position(j1.posicionAnterior())
+					j1.image("player"+j1.vistaActual()+"DañoConCaja.png")
 				} 
 			})
 			game.schedule(600, {
 				j1.movimientoPermitido(true)
 				j1.image("player"+j1.vistaActual()+".png")
+				if(j1.cajaEncima() != null){
+					j1.image("player"+j1.vistaActual()+"Caja.png")
+				}
 				if(j1.getVidas() == 0){
 					estaEnCartelFinal = true
 					const visuales = game.allVisuals()
 					visuales.forEach({v=>game.removeVisual(v)})
 					game.addVisual(crtlMrt)
 				}
+				if(o.id() == "trampa"){
+					o.image("pincheCerrado.png")
+				}		
 			})
 			game.removeVisual(cantidadVida)
 			j1.perderUnaVida()
 			cantidadVida.texto(j1.getVidas())
 			game.addVisual(cantidadVida)
+		}else if(o.tipo() == puerta){
+			const visuales = game.allVisuals()
+			visuales.forEach({v=>game.removeVisual(v)})
+			if(o.id().between(1,6)){
+				if(o.id().between(1,3)){
+					posJugadorEnPasillo = new Position(x = j1.position().x() + 1 , y=j1.position().y())
+					bordeNegro.image("NegroSalaHab"+j1.vistaActual()+".png")
+					game.addVisual(bordeNegro)
+					(1..16).forEach({posY =>
+						if(posY != 9){
+							game.addVisual(new Pared(position = new Position(x=26,y=posY),image = "paredDer.png"))
+						}
+					})
+					game.addVisual(new Puerta(position = new Position(x=26,y=9),image = "puertaCostadoIzqAbierta2.png", id = 0))
+					game.addVisual(new Decoracion(position = new Position(x=25,y=9),image = "puertaCuartoIzqNoOBJETO.png"))
+					j1.position(game.at(25,9))
+				}else if(o.id().between(4,6)){
+					posJugadorEnPasillo = new Position(x = j1.position().x() - 1 , y=j1.position().y())
+					bordeNegro.image("NegroSalaHab"+j1.vistaActual()+".png")
+					game.addVisual(bordeNegro)
+					(1..16).forEach({posY =>
+						if(posY != 9){
+							game.addVisual(new Pared(position = new Position(x=1,y=posY),image = "paredIzq.png"))
+						}
+					})
+					game.addVisual(new Puerta(position = new Position(x=1,y=9),image = "puertaCostadoDerAbierta2.png", id = 0))
+					j1.position(game.at(2,9))
+				}
+			}else{
+				bordeNegro.image("bordeNegroPasillo.png")
+				game.addVisual(bordeNegro)
+				j1.position(posJugadorEnPasillo)
+				game.addVisual(m1)
+				(1..16).forEach({posY =>
+					var id = 1
+					game.addVisual(new Pared(position = new Position(x=6,y=posY),image = "paredIzq.png"))
+					game.addVisual(new Pared(position = new Position(x=21,y=posY),image = "paredDer.png"))
+					if(posY%4==0 and posY<16){
+						game.addVisual(new Puerta(position = new Position(x=6,y=posY),image = "puertaCostadoIzq.png", id = id))
+						game.addVisual(new Puerta(position = new Position(x=21,y=posY),image = "puertaCostadoDer.png", id = id+3))
+						id++
+					}
+				})
+			}
+			cantidadVida.texto(j1.getVidas())
+			game.addVisual(cantidadVida)
+			game.addVisual(visualVida)
+			game.addVisual(j1)
 		}
+//		else if(o.tipo() == fragmentoDeLLave){
+//			fragmentosConseguidos++
+//		}
 	})
 	
-	keyboard.k().onPressDo({
+	keyboard.r().onPressDo({
 		if(estaEnCartelFinal){
 			game.removeVisual(crtlMrt)
 			j1.position(game.center())
@@ -70,17 +141,23 @@ program juego {
 			game.addVisual(cantidadVida)
 			game.addVisual(visualVida)
 			game.addVisual(m1)
-			game.addVisual(j1)
-			(0..17).forEach({posY =>
-				game.addVisual(new BloquePared(position = new Position(x=6,y=posY)))
-				game.addVisual(new BloquePared(position = new Position(x=21,y=posY)))
+			(1..16).forEach({posY =>
+				var id = 1
+				game.addVisual(new Pared(position = new Position(x=6,y=posY),image = "paredIzq.png"))
+				game.addVisual(new Pared(position = new Position(x=21,y=posY),image = "paredDer.png"))
+				if(posY%4==0 and posY<16){
+					game.addVisual(new Puerta(position = new Position(x=6,y=posY),image = "puertaCostadoIzq.png", id = id))
+					game.addVisual(new Puerta(position = new Position(x=21,y=posY),image = "puertaCostadoDer.png", id = id+3))
+					id++
+				}
 			})
+			game.addVisual(j1)
 			estaEnCartelFinal = false
-			game.boardGround("piso-pasillo.png")
+//			game.boardGround("piso-pasillo-1.png")
 		}
 	})
 	
-	keyboard.j().onPressDo({
+	keyboard.t().onPressDo({
 		if(estaEnCartelFinal){
 			game.stop()
 		}
@@ -92,18 +169,34 @@ program juego {
 	keyboard.s().onPressDo({j1.moverAbajo()})
 	keyboard.d().onPressDo({j1.moverDerecha()})
 	
-	keyboard.c().onPressDo({
+	keyboard.e().onPressDo({
 		if(!estaEnCartelFinal and j1.movimientoPermitido()){
-			if(j1.cajaEncima() == null){
+			if(j1.cajaEncima() == null and game.colliders(j1).any({o=>o.tipo() == objetoMovible})){
 				j1.cajaEncima(game.colliders(j1).first())
 				game.removeVisual(caja1)
-			} else{
+				j1.image("player"+j1.vistaActual()+"Caja.png")
+			} else if(j1.cajaEncima() != null){
 				j1.cajaEncima(null)
 				game.addVisual(caja1)
+				j1.image("player"+j1.vistaActual()+".png")
 			}
+		} 
+		if(j1.hayObstaculo_Adelante(puerta)){
+			var posPuerta
+			if(j1.vistaActual() == "Der"){	
+				posPuerta = new Position(x = j1.position().x()+1 , y = j1.position().y())
+			}else if(j1.vistaActual() == "Izq"){
+				posPuerta = new Position(x = j1.position().x()-1 , y = j1.position().y())
+			}
+			var puertaAdelante = game.getObjectsIn(posPuerta).find({o => o.tipo() == puerta})
+			puertaAdelante.image("puertaCostado"+j1.vistaActual()+"Abierta.png")
+			var bloquesSolidos = game.getObjectsIn(posPuerta).filter({o => o.tipo() == bloqueSolido})
+			bloquesSolidos.forEach({bs => game.removeVisual(bs)})
 		}
 	})
+
 	
+	game.addVisual(new BolaPlasma(image = "bolaPlasma.png",position = game.at(10,10)))
 	
 	game.start()
 }

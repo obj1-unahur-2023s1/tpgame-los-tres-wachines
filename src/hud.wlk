@@ -6,7 +6,14 @@ object visualVida {
 }
 object cantidadVida {
 	var property texto
-	var property position = game.at(1,game.height()-1)
+	method position() = game.at(1,game.height()-1)
 	method textColor() = "#ffffff"
 	method text() = "x" + texto.toString()
+	method tipo(){}
+}
+
+
+object bordeNegro{
+	var property image = "bordeNegroPasillo.png"
+	method position() = game.origin()
 }
