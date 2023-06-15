@@ -11,17 +11,6 @@ class Trampa {
 	var property image = "pincheCerrado.png"
 	var property position
 	method tipo() = objetoPeligroso
-	method id() = "trampa" 
-}
-
-class BolaPlasma inherits Trampa{
-	override method id() = "bolaPlasma"
-}
-
-class CartelMuerte{
-	var property image = "ct2.png"
-	var property position = game.origin()
-	method tipo() = bloqueSolido
 }
 
 class CajaMadera{

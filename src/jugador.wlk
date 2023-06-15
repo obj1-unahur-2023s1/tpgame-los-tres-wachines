@@ -3,13 +3,13 @@ import obstaculos.*
 import tiposDeObstaculos.*
 import hud.*
 
-class Jugador {
+object alex {
 	var property position = game.center()
 	var property movimientoPermitido = true
 	var property image = "playerDer.png"
-	var property posicionAnterior = position
-	var property vistaActual = "Der"
-	var property vistaAnterior = "Der"
+	var posicionAnterior = position
+	var property vistaActual = "Abajo"
+	var vistaAnterior = "Abajo"
 	var property cajaEncima = null
 	var vidas = 3
 	
@@ -18,11 +18,7 @@ class Jugador {
 	method moverArriba(){
 		if(movimientoPermitido){
 			vistaActual = "Arriba"
-			image = "playerArriba.png"
-			if(cajaEncima != null){
-				image = "playerArribaCaja.png"
-				
-				}
+			self.visualPersonaje(false)
 			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().y() < game.height()-2){
 				posicionAnterior = position
 				position = position.up(1)
@@ -36,11 +32,7 @@ class Jugador {
 	method moverDerecha(){
 		if(movimientoPermitido){
 			vistaActual = "Der"
-			image = "playerDer.png"
-			if(cajaEncima != null){
-				image = "playerDerCaja.png"
-				
-				}
+			self.visualPersonaje(false)
 			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().x() < game.width()-2){
 				posicionAnterior = position
 				position = position.right(1)
@@ -54,11 +46,7 @@ class Jugador {
 	method moverIzquierda(){
 		if(movimientoPermitido){
 			vistaActual = "Izq"
-			image = "playerIzq.png"
-			if(cajaEncima != null){
-				image = "playerIzqCaja.png"
-				
-				}
+			self.visualPersonaje(false)
 			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().x() > 1){
 				posicionAnterior = position
 				position = position.left(1)
@@ -72,11 +60,7 @@ class Jugador {
 	method moverAbajo(){
 		if(movimientoPermitido){
 			vistaActual = "Abajo"
-			image = "playerAbajo.png"
-			if(cajaEncima != null){
-				image = "playerAbajoCaja.png"
-				
-				}
+			self.visualPersonaje(false)
 			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().y() > 1){
 				posicionAnterior = position
 				position = position.down(1)
@@ -107,7 +91,32 @@ class Jugador {
 
 	method getVidas() = vidas
 	method setVidas(cantVidas) {vidas = cantVidas}
-	method perderUnaVida() {vidas = 0.max(vidas-1)}
 	method sumarUnaVida() {vidas = 6.min(vidas+1)}
-		
+	method recibirDanio() {
+		self.visualPersonaje(true)
+		position = posicionAnterior
+		vidas = 0.max(vidas-1)
+	}
+
+	// --- IMAGEN ---
+	
+	method visualPersonaje(recibeDanio){
+		var final = ".png"
+		if(self.cajaEncima() != null){
+			final = "Caja.png"		
+			if(recibeDanio){
+				final = "DañoConCaja.png"
+			}
+		} else {
+			if(recibeDanio){
+				final = "Daño.png"
+			}
+		}
+		image = "player"+vistaActual+final
+	}
+	
+	// --- COLISION ---
+	
+	method colisionCon_DeTipo_(objeto,tipo) = objeto.tipo() == tipo
+	
 }

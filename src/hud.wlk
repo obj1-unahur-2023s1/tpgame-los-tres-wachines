@@ -10,10 +10,22 @@ object cantidadVida {
 	method textColor() = "#ffffff"
 	method text() = "x" + texto.toString()
 	method tipo(){}
+	method actualizar(personaje){
+		game.removeVisual(self)
+		texto = personaje.getVidas()
+		game.addVisual(self)
+	}
 }
 
 
 object bordeNegro{
 	var property image = "bordeNegroPasillo.png"
 	method position() = game.origin()
+}
+
+
+class CartelMuerte{
+	var property image = "ct2.png"
+	var property position = game.origin()
+	method tipo(){}
 }
