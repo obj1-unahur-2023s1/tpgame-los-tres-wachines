@@ -1,6 +1,6 @@
 import wollok.game.*
 import obstaculos.*
-import tiposDeObstaculos.*
+import tipos.*
 import hud.*
 
 object alex {
@@ -22,9 +22,6 @@ object alex {
 			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().y() < game.height()-2){
 				posicionAnterior = position
 				position = position.up(1)
-				if(cajaEncima != null){
-					cajaEncima.position(self.position())
-				}
 			}
 			vistaAnterior = vistaActual
 		}
@@ -36,9 +33,6 @@ object alex {
 			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().x() < game.width()-2){
 				posicionAnterior = position
 				position = position.right(1)
-				if(cajaEncima != null){
-					cajaEncima.position(self.position())
-				}
 			}
 			vistaAnterior = vistaActual	
 		}
@@ -50,9 +44,6 @@ object alex {
 			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().x() > 1){
 				posicionAnterior = position
 				position = position.left(1)
-				if(cajaEncima != null){
-					cajaEncima.position(self.position())
-				}
 			}
 			vistaAnterior = vistaActual
 		}
@@ -64,9 +55,6 @@ object alex {
 			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().y() > 1){
 				posicionAnterior = position
 				position = position.down(1)
-				if(cajaEncima != null){
-					cajaEncima.position(self.position())
-				}
 			}
 			vistaAnterior = vistaActual
 		}	
@@ -118,5 +106,6 @@ object alex {
 	// --- COLISION ---
 	
 	method colisionCon_DeTipo_(objeto,tipo) = objeto.tipo() == tipo
+	method tipo() = personaje
 	
 }

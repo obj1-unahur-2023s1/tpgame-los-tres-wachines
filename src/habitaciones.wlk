@@ -16,4 +16,12 @@ class Habitacion {
 			visuales.forEach({v=>game.removeVisual(v)})
 		}
 	}
+	method removerVisualesDeTipo_En_(tipo,pos){
+		const objetosARemover = game.getObjectsIn(pos).filter({o => o.tipo() == tipo})
+		objetosARemover.forEach({o => game.removeVisual(o)})
+		visuales.removeAll(objetosARemover)
+	}
+	method removerElemento(elemento){
+		visuales.remove(elemento)
+	}
 }
