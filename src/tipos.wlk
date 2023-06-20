@@ -1,6 +1,6 @@
 object bloqueSolido{}
-object objetoPeligroso{}
+object trampa{}
 object objetoMovible{}
-object bloqueCaminable{}
+object decoracion{}
 object puerta{}
 object personaje{}

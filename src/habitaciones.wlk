@@ -5,6 +5,7 @@ class Habitacion {
 
 	method visuales() = visuales
 	method agregarVisual(unVisual) {visuales.add(unVisual)}
+	method agregarVisuales(listaDeVisuales) {visuales.addAll(listaDeVisuales)}
 	method nombre() = nombre
 	method mostrarVisuales() {
 		if(!visuales.isEmpty()){			
@@ -23,5 +24,11 @@ class Habitacion {
 	}
 	method removerElemento(elemento){
 		visuales.remove(elemento)
+	}
+	method estadoInicial(){
+		visuales.forEach({
+			v=>v.estadoInicial()
+		})
+		self.mostrarVisuales()
 	}
 }

@@ -19,7 +19,7 @@ object alex {
 		if(movimientoPermitido){
 			vistaActual = "Arriba"
 			self.visualPersonaje(false)
-			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().y() < game.height()-2){
+			if(self.objetoAdelanteEsAtravesable() and vistaAnterior == vistaActual and self.position().y() < game.height()-2){
 				posicionAnterior = position
 				position = position.up(1)
 			}
@@ -30,7 +30,7 @@ object alex {
 		if(movimientoPermitido){
 			vistaActual = "Der"
 			self.visualPersonaje(false)
-			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().x() < game.width()-2){
+			if(self.objetoAdelanteEsAtravesable() and vistaAnterior == vistaActual and self.position().x() < game.width()-2){
 				posicionAnterior = position
 				position = position.right(1)
 			}
@@ -41,7 +41,7 @@ object alex {
 		if(movimientoPermitido){
 			vistaActual = "Izq"
 			self.visualPersonaje(false)
-			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().x() > 1){
+			if(self.objetoAdelanteEsAtravesable() and vistaAnterior == vistaActual and self.position().x() > 1){
 				posicionAnterior = position
 				position = position.left(1)
 			}
@@ -52,7 +52,7 @@ object alex {
 		if(movimientoPermitido){
 			vistaActual = "Abajo"
 			self.visualPersonaje(false)
-			if(!self.hayObstaculo_Adelante(bloqueSolido) and vistaAnterior == vistaActual and self.position().y() > 1){
+			if(self.objetoAdelanteEsAtravesable() and vistaAnterior == vistaActual and self.position().y() > 1){
 				posicionAnterior = position
 				position = position.down(1)
 			}
@@ -60,7 +60,7 @@ object alex {
 		}	
 	}
 	
-	method hayObstaculo_Adelante(tipo){
+	method obtenerObjetosAdelante(){
 		var sumaX = 0
 		var sumaY = 0
 		if(vistaActual == "Der"){
@@ -72,7 +72,14 @@ object alex {
 		}else{
 			sumaY = -1
 		}
-		return game.getObjectsIn(new Position(x = self.position().x()+sumaX, y = self.position().y()+sumaY)).any({o=>o.tipo() == tipo })
+		return game.getObjectsIn(game.at(position.x()+sumaX, position.y()+sumaY))
+	}
+	
+	method hayObstaculo_Adelante(tipo) = self.obtenerObjetosAdelante().any({o => o.tipo() == tipo})
+	
+	method objetoAdelanteEsAtravesable() {
+		const objetosAdelante = self.obtenerObjetosAdelante()
+		return objetosAdelante.any({o => o.esAtravesable()}) or objetosAdelante.isEmpty()
 	}
 	
 	// --- VIDAS ---
