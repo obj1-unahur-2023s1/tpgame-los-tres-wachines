@@ -10,7 +10,7 @@ object alex {
 	var posicionAnterior = position
 	var property vistaActual = "Abajo"
 	var vistaAnterior = "Abajo"
-	var property cajaEncima = null
+	var objetoEncima = null
 	var vidas = 3
 	
 	// --- MOVIMIENTO ---
@@ -97,7 +97,7 @@ object alex {
 	
 	method visualPersonaje(recibeDanio){
 		var final = ".png"
-		if(self.cajaEncima() != null){
+		if(self.tieneLasManosOcupadas()){
 			final = "Caja.png"		
 			if(recibeDanio){
 				final = "DañoConCaja.png"
@@ -114,5 +114,8 @@ object alex {
 	
 	method colisionCon_DeTipo_(objeto,tipo) = objeto.tipo() == tipo
 	method tipo() = personaje
+	method tieneLasManosOcupadas() = objetoEncima != null
+	method objetoEnManos() = objetoEncima
+	method agarrarObjeto(unObjeto){objetoEncima = unObjeto}
 	
 }

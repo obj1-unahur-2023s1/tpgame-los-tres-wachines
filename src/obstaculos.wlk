@@ -32,34 +32,55 @@ class Trampa inherits ObstaculoAtravesable{
 
 class CajaMadera inherits ObstaculoAtravesable{
 	var property position
-	method image() = "caja2.png"
+	method image() = "caja.png"
 	method tipo() = objetoMovible
 }
 
-class PuertaDer inherits ObstaculoNoAtravesable{
+class Puerta inherits ObstaculoNoAtravesable{
 	var property id
 	var property position
+	var estaBloqueada = false
 	var image = "puertaCostadoDer.png"
 	method image() = image
 	method image(unaImagen) {image = unaImagen}
 	method tipo() = puerta
-	method abrirPuerta() {
-		image = "puertaCostadoDerAbierta.png"
-		esAtravesable = true
+	method bloquearPuerta(){
+		esAtravesable = false
+		estaBloqueada = true
 	}
 	override method estadoInicial() {
 		image = "puertaCostadoDer.png"
 		esAtravesable = false
+		estaBloqueada = false
 	}
 }
 
-class PuertaIzq inherits PuertaDer{
+class PuertaDer inherits Puerta{
+	override method bloquearPuerta(){
+		super()
+		image = "puertaCostadoDer.png" 
+	}
+	method abrirPuerta() {
+		if(!estaBloqueada){
+			image = "puertaCostadoDerAbierta.png"
+			esAtravesable = true
+		}
+	}
+}
+
+class PuertaIzq inherits Puerta{
 	method initialize(){
 		self.image("puertaCostadoIzq.png")
 	}
-	override method abrirPuerta() {
+	override method bloquearPuerta(){
 		super()
-		image = "puertaCostadoIzqAbierta.png"
+		image = "puertaCostadoIzq.png" 
+	}
+	method abrirPuerta() {
+		if(!estaBloqueada){
+			image = "puertaCostadoIzqAbierta.png"
+			esAtravesable = true
+		}
 	}
 	override method estadoInicial() {
 		super()
@@ -73,13 +94,46 @@ class DecoAtravesable inherits ObstaculoAtravesable{
 	method tipo() = decoracion
 }
 
-class PlacaPresion inherits ObstaculoAtravesable{}
-class FragmentoDeLLave inherits ObstaculoAtravesable{}
-class Palanca inherits ObstaculoAtravesable{}
-class DecoNoAtravesable inherits ObstaculoNoAtravesable{}
-object puertaFinal inherits ObstaculoNoAtravesable{}
-
-class Pizarron{
-	
+class PlacaPresion inherits ObstaculoAtravesable{
+	var property position
+	var property image = "placaPresion.png"
+	var estaActiva = false
+	method estaActiva() = estaActiva
+	method activar(){
+		image = "placaPresionActiva.png"
+		estaActiva = true
+	}
+	method desactivar(){
+		image = "placaPresion.png"
+		estaActiva = false
+	}
+	method tipo() = placaPresion
 }
 
+class FragmentoDeLLave inherits ObstaculoAtravesable{}
+
+class Palanca inherits ObstaculoAtravesable{
+	var property id
+	var property position
+	var property image = "palanca.png"
+	var estaActiva = false
+	method estaActiva() = estaActiva
+	method activar(){
+		image = "palancaActiva.png"
+		estaActiva = true
+	}
+	method desactivar(){
+		image = "palanca.png"
+		estaActiva = false
+	}
+	method tipo() = palanca
+}
+
+class DecoNoAtravesable inherits ObstaculoNoAtravesable{}
+
+object puertaFinal inherits ObstaculoNoAtravesable{}
+
+
+//class Pizarron{
+//	
+//}

@@ -1,4 +1,5 @@
 import wollok.game.*
+import tipos.*
 
 object visualVida {
 	var property image = "corazon.png"
