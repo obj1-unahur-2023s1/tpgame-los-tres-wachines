@@ -1,6 +1,7 @@
 import wollok.game.*
 import obstaculos.*
 import tipos.*
+import jugador.*
 
 
 class Habitacion{
@@ -38,6 +39,7 @@ class Habitacion{
 		visuales.forEach({v=>v.estadoInicial()})
 		minijuego.estadoInicial()
 	}
+	method actualizarEstado(){}
 }
 
 class PasilloPrincipal inherits Habitacion{
@@ -60,7 +62,7 @@ class PasilloPrincipal inherits Habitacion{
 		super()
 		self.mostrarVisuales()
 	}
-	method actualizarEstado(){
+	override method actualizarEstado(){
 		if(minijuego.minijuegoCompletado()){
 			const portalFinal = visuales.find({v => v.tipo() == puerta and v.id() == 666})
 			minijuego.desactivarMinijuego()

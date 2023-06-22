@@ -29,8 +29,6 @@ program juego{
 	
 	var habitacionActual = pasilloPrincipal
 	var posDeAlexEnPasillo
-	
-	habitacion2.agregarVisual(new Trampa(position = game.at(2,2)))
 
 	pasilloPrincipal.mostrarVisuales()
 	cantidadVida.texto(alex.getVidas())
@@ -154,14 +152,12 @@ program juego{
 			}else{
 				const objetosAManipular = game.colliders(alex)
 				if(!alex.tieneLasManosOcupadas() and objetosAManipular.any({o => o.tipo() == objetoMovible})){
-					const caja = objetosAManipular.find({o=>o.tipo() == objetoMovible})
-					alex.agarrarObjeto(caja)
-					habitacionActual.minijuego().removerElemento(caja)
-					game.removeVisual(caja)
-					alex.visualPersonaje(false)
-					if(objetosAManipular.any({o => o.tipo() == placaPresion})){
-						const placa = objetosAManipular.find({o=>o.tipo() == placaPresion})
-						placa.desactivar()
+					if(!objetosAManipular.any({o => o.tipo() == placaPresion})){
+						const caja = objetosAManipular.find({o=>o.tipo() == objetoMovible})
+						alex.agarrarObjeto(caja)
+						habitacionActual.minijuego().removerElemento(caja)
+						game.removeVisual(caja)
+						alex.visualPersonaje(false)
 					}
 				}else if(alex.tieneLasManosOcupadas() and !alex.hayObstaculo_Adelante(puerta) and !objetosAManipular.any({o => o.tipo() == objetoMovible})){
 					const caja = alex.objetoEnManos()
@@ -173,14 +169,18 @@ program juego{
 					if(objetosAManipular.any({o => o.tipo() == placaPresion})){
 						const placa = objetosAManipular.find({o=>o.tipo() == placaPresion})
 						placa.activar()
-						habitacionActual.minijuego().sumarUnPunto()
+						habitacionActual.minijuego().recibirAccion(placa)
 					}
 				//---palanca---
 				}else if(!alex.tieneLasManosOcupadas() and objetosAManipular.any({o => o.tipo() == palanca})){
 					const palancaActual = objetosAManipular.find({o=>o.tipo() == palanca})
 					if(!palancaActual.estaActiva()){						
 						palancaActual.activar()
-						habitacionActual.minijuego().sumarUnPuntoId(palancaActual.id())
+						habitacionActual.minijuego().recibirAccion(palancaActual)
+						if(habitacionActual.minijuego().estaEnEstadoCritico()){
+							alex.recibirDanio()
+							cantidadVida.actualizar(alex)
+						}
 					}
 //					habitacionActual.listaMinijuego().add(palanca)
 				}

@@ -5,7 +5,9 @@ import tipos.*
 class Minijuego{
 	var puntos = 0
 	var minijuegoActivo = true
+	var estaEnEstadoCritico = false
 	const visualesMinijuego = []
+	
 	
 	method mostrarVisuales(){
 		if(!visualesMinijuego.isEmpty()){			
@@ -34,6 +36,9 @@ class Minijuego{
 	method minijuegoCompletado() 
 	method minijuegoEstaActivo() = minijuegoActivo
 	method desactivarMinijuego(){minijuegoActivo = false}
+	method estaEnEstadoCritico() = estaEnEstadoCritico
+	method activarEstadoCritico() {estaEnEstadoCritico = true}
+	method desactivarEstadoCritico() {estaEnEstadoCritico = false}
 	method estadoInicial()
 }
 
@@ -51,13 +56,14 @@ class MinijuegoCajasPlacas inherits Minijuego{
 		posPosiblesX.clear()
 		posPosiblesY.clear()
 		visualesMinijuego.clear()
-		posPosiblesX.addAll((2..24).asList())
+		posPosiblesX.addAll((3..24).asList())
 		posPosiblesY.addAll((1..16).asList())
 		self.agregarPrimerosVisuales()
 	}
 	
 	method agregarPrimerosVisuales(){
-		(1..4).forEach({n=>
+		
+		(1..8).forEach({n=>
 			const posParesX = posPosiblesX.filter({p=>p.even()})
 			const posParesY = posPosiblesY.filter({p=>p.even()})
 			const posImparesX = posPosiblesX.filter({p=>p.odd()})
@@ -73,9 +79,33 @@ class MinijuegoCajasPlacas inherits Minijuego{
 			visualesMinijuego.add(new CajaMadera(position = game.at(posXCaja,posYCaja))) 
 			visualesMinijuego.add(new PlacaPresion(position = game.at(posXPlaca,posYPlaca)))
 		})
+		posPosiblesX.clear()
+		posPosiblesY.clear()
+		posPosiblesX.addAll((3..24).asList())
+		posPosiblesY.addAll((1..16).asList())
+		(1..6).forEach({n=>
+			const posParesX = posPosiblesX.filter({p=>p.even()})
+			const posParesY = posPosiblesY.filter({p=>p.even()})
+			const posImparesX = posPosiblesX.filter({p=>p.odd()})
+			const posImparesY = posPosiblesY.filter({p=>p.odd()})
+			var posXTrampa = posImparesX.get((0.randomUpTo(posImparesX.size()-1)).truncate(0))
+			posPosiblesX.remove(posXTrampa)
+			var posYTrampa = posParesY.get((0.randomUpTo(posParesY.size()-1)).truncate(0))
+			posPosiblesY.remove(posYTrampa)
+			visualesMinijuego.add(new Trampa(position = game.at(posXTrampa,posYTrampa)))
+			posXTrampa = posParesX.get((0.randomUpTo(posParesX.size()-1)).truncate(0))
+			posPosiblesX.remove(posXTrampa)
+			posYTrampa = posImparesY.get((0.randomUpTo(posImparesY.size()-1)).truncate(0))
+			posPosiblesY.remove(posYTrampa)
+			visualesMinijuego.add(new Trampa(position = game.at(posXTrampa,posYTrampa)))
+		})
 	}
 	
-	override method minijuegoCompletado() = puntos == 4
+	method recibirAccion(unaPlaca){
+		self.sumarUnPunto()
+	}
+	
+	override method minijuegoCompletado() = puntos == 8
 }
 
 
@@ -107,9 +137,17 @@ class MinijuegoPalancas inherits Minijuego{
 				visualesMinijuego.add(new DecoAtravesable(image = "numero"+numComb+".png",position = game.at(6+n*2,17)))
 		})
 	}
-	method sumarUnPuntoId(idPalanca){
-		self.sumarUnPunto()
-		combinacionIngresada.add(idPalanca)
+	method recibirAccion(unaPalanca){
+		combinacionIngresada.add(unaPalanca.id())
+		if(combinacionIngresada.get(puntos) == listaCombinacion.get(puntos)){
+			self.desactivarEstadoCritico()
+			self.sumarUnPunto()			
+		}else{
+			self.activarEstadoCritico()
+			combinacionIngresada.clear()
+			puntos = 0
+			visualesMinijuego.filter({v=>v.tipo() == palanca}).forEach({p=>p.estadoInicial()})
+		}
 	}
 	
 	override method minijuegoCompletado() = puntos == 6 and combinacionIngresada == listaCombinacion
@@ -128,12 +166,13 @@ class MinijuegoPasillo inherits Minijuego{
 	override method minijuegoCompletado() = cantLamparasPrendidas == 6
 	override method estadoInicial(){
 		cantLamparasPrendidas = 0
-		lamparas.forEach({l=>l.apagar()})
+		lamparas.forEach({l=>l.estadoInicial()})
 	}
 	method nivel_Completado(idNivel){
-		lamparas.get(idNivel).encender()
+		lamparas.find({l=>l.id() == idNivel}).encender()
 		cantLamparasPrendidas++
 	}
+//	method recibirAccion(p){}
 }
 
 

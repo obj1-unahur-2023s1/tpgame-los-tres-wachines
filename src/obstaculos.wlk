@@ -2,20 +2,28 @@ import tipos.*
 import wollok.game.*
 
 class ObstaculoNoAtravesable{
-	var esAtravesable = false
-	method esAtravesable() = esAtravesable
-	method estadoInicial(){}
+	method esAtravesable() = false
+	method estadoInicial()
 }
 
 class ObstaculoAtravesable{
 	method esAtravesable() = true
-	method estadoInicial(){}
+	method estadoInicial()
+}
+
+class ObstaculoHibrido{
+	var esAtravesable = false
+	method esAtravesable() = esAtravesable
+	method volverAtravesable(){esAtravesable = true}
+	method volverNoAtravesable(){esAtravesable = false}
+	method estadoInicial()
 }
 
 class Pared inherits ObstaculoNoAtravesable{
 	var property position
 	var property image
 	method tipo() = bloqueSolido
+	override method estadoInicial(){}
 }
 
 class Trampa inherits ObstaculoAtravesable{
@@ -34,10 +42,11 @@ class CajaMadera inherits ObstaculoAtravesable{
 	var property position
 	method image() = "caja.png"
 	method tipo() = objetoMovible
+	override method estadoInicial(){}
 }
 
 
-class Puerta inherits ObstaculoNoAtravesable{
+class Puerta inherits ObstaculoHibrido{
 	var property id
 	var property position
 	var estaBloqueada = false
@@ -46,12 +55,12 @@ class Puerta inherits ObstaculoNoAtravesable{
 	method image(unaImagen) {image = unaImagen}
 	method tipo() = puerta
 	method bloquearPuerta(){
-		esAtravesable = false
+		self.volverNoAtravesable()
 		estaBloqueada = true
 	}
 	override method estadoInicial() {
 		image = "puertaCostadoDer.png"
-		esAtravesable = false
+		self.volverNoAtravesable()
 		estaBloqueada = false
 	}
 }
@@ -65,7 +74,7 @@ class PuertaDer inherits Puerta{
 	method abrirPuerta() {
 		if(!estaBloqueada){
 			image = "puertaCostadoDerAbierta.png"
-			esAtravesable = true
+			self.volverAtravesable()
 		}
 	}
 }
@@ -82,7 +91,7 @@ class PuertaIzq inherits Puerta{
 	method abrirPuerta() {
 		if(!estaBloqueada){
 			image = "puertaCostadoIzqAbierta.png"
-			esAtravesable = true
+			self.volverAtravesable()
 		}
 	}
 	override method estadoInicial() {
@@ -96,6 +105,7 @@ class DecoAtravesable inherits ObstaculoAtravesable{
 	var property position
 	var property image
 	method tipo() = decoracion
+	override method estadoInicial(){}
 }
 
 class PlacaPresion inherits ObstaculoAtravesable{
@@ -107,7 +117,7 @@ class PlacaPresion inherits ObstaculoAtravesable{
 		image = "placaPresionActiva.png"
 		estaActiva = true
 	}
-	method desactivar(){
+	override method estadoInicial(){
 		image = "placaPresion.png"
 		estaActiva = false
 	}
@@ -125,7 +135,7 @@ class Palanca inherits ObstaculoAtravesable{
 		image = "palancaActiva.png"
 		estaActiva = true
 	}
-	method desactivar(){
+	override method estadoInicial(){
 		image = "palanca.png"
 		estaActiva = false
 	}
@@ -150,9 +160,9 @@ class LamparaNivel inherits ObstaculoNoAtravesable{
 
 class Portal inherits Puerta{
 	method initialize(){
-		self.estadoinicial()
+		self.estadoInicial()
 	}
-	method estadoinicial(){
+	override method estadoInicial(){
 		self.image("portalApagado.png")
 		estaBloqueada = true
 	}
@@ -163,7 +173,7 @@ class Portal inherits Puerta{
 	method abrirPuerta() {
 		if(!estaBloqueada){
 			image = "portalActivo.png"
-			esAtravesable = true
+			self.volverAtravesable()
 		}
 	}
 }

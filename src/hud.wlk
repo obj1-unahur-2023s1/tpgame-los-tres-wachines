@@ -1,5 +1,4 @@
 import wollok.game.*
-import tipos.*
 
 object visualVida {
 	var property image = "corazon.png"
@@ -11,9 +10,9 @@ object cantidadVida {
 	method textColor() = "#ffffff"
 	method text() = "x" + texto.toString()
 	method tipo(){}
-	method actualizar(personaje){
+	method actualizar(unPersonaje){
 		game.removeVisual(self)
-		texto = personaje.getVidas()
+		texto = unPersonaje.getVidas()
 		game.addVisual(self)
 	}
 }
