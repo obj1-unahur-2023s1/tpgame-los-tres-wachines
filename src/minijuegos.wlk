@@ -1,7 +1,9 @@
 import wollok.game.*
 import obstaculos.*
+import tipos.*
 
 class Minijuego{
+	var puntos = 0
 	var minijuegoActivo = true
 	const visualesMinijuego = []
 	
@@ -25,18 +27,36 @@ class Minijuego{
 		visualesMinijuego.remove(elemento)
 	}
 	
+	method sumarUnPunto(){
+		puntos++
+	}
+	
 	method minijuegoCompletado() 
 	method minijuegoEstaActivo() = minijuegoActivo
 	method desactivarMinijuego(){minijuegoActivo = false}
+	method estadoInicial()
 }
 
 class MinijuegoCajasPlacas inherits Minijuego{
-	var cantPlacasActivas = 0
 	const posPosiblesX = []
 	const posPosiblesY = []
 	
 	method initialize(){
 		self.estadoInicial()
+	}
+	
+	override method estadoInicial(){
+		puntos = 0
+		minijuegoActivo = true
+		posPosiblesX.clear()
+		posPosiblesY.clear()
+		visualesMinijuego.clear()
+		posPosiblesX.addAll((2..24).asList())
+		posPosiblesY.addAll((1..16).asList())
+		self.agregarPrimerosVisuales()
+	}
+	
+	method agregarPrimerosVisuales(){
 		(1..4).forEach({n=>
 			const posParesX = posPosiblesX.filter({p=>p.even()})
 			const posParesY = posPosiblesY.filter({p=>p.even()})
@@ -55,53 +75,65 @@ class MinijuegoCajasPlacas inherits Minijuego{
 		})
 	}
 	
-	method estadoInicial(){
-		posPosiblesX.clear()
-		posPosiblesY.clear()
-		posPosiblesX.addAll((2..24).asList())
-		posPosiblesY.addAll((1..16).asList())
-	}
-	
-	method sumarUnaPlaca(){cantPlacasActivas++}
-	
-	override method minijuegoCompletado() = cantPlacasActivas == 4
-
+	override method minijuegoCompletado() = puntos == 4
 }
 
 
 class MinijuegoPalancas inherits Minijuego{
-	var cantPalancasActivas = 0
 	const listaIdPalancas = []
 	const listaCombinacion = []
 	const combinacionIngresada = []
 	
 	method initialize(){
 		self.estadoInicial()
+	}
+	
+	override method estadoInicial() {
+		puntos = 0
+		minijuegoActivo = true
+		combinacionIngresada.clear()
+		listaCombinacion.clear()
+		visualesMinijuego.clear()
+		listaIdPalancas.addAll((1..6).asList())
+		self.agregarPrimerosVisuales()
+	}
+	
+	method agregarPrimerosVisuales(){
 		(1..6).forEach({n=>
-			const numComb = listaIdPalancas.get((0.randomUpTo(listaIdPalancas.size()-1)).truncate(0))
-			listaIdPalancas.remove(numComb)
-			listaCombinacion.add(numComb)
-			visualesMinijuego.add(new Palanca(position = game.at(6+n*2,9), id = n)) 
-			visualesMinijuego.add(new DecoAtravesable(image = "numero"+numComb+".png",position = game.at(6+n*2,17)))
+				const numComb = listaIdPalancas.get((0.randomUpTo(listaIdPalancas.size()-1)).truncate(0))
+				listaIdPalancas.remove(numComb)
+				listaCombinacion.add(numComb)
+				visualesMinijuego.add(new Palanca(position = game.at(6+n*2,9), id = n)) 
+				visualesMinijuego.add(new DecoAtravesable(image = "numero"+numComb+".png",position = game.at(6+n*2,17)))
 		})
 	}
-	
-	method estadoInicial() {
-		combinacionIngresada.clear()
-		listaIdPalancas.addAll((1..6).asList())
-		listaCombinacion.clear()
-	}
-	
-	method sumarUnaPalanca(idPalanca){
-		cantPalancasActivas++
+	method sumarUnPuntoId(idPalanca){
+		self.sumarUnPunto()
 		combinacionIngresada.add(idPalanca)
 	}
 	
-	override method minijuegoCompletado() = cantPalancasActivas == 6 and combinacionIngresada == listaCombinacion
+	override method minijuegoCompletado() = puntos == 6 and combinacionIngresada == listaCombinacion
 }
 
 class MinijuegoPasillo inherits Minijuego{
-	method minijuegoCompletado() = false
+	const lamparas = []
+	var cantLamparasPrendidas = 0
+	method initialize(){
+		(1..3).forEach({ n =>
+			lamparas.add(new LamparaNivel(position = game.at(10+n,17),id = n-1))
+			lamparas.add(new LamparaNivel(position = game.at(14+n,17),id = n+2))
+		})
+		visualesMinijuego.addAll(lamparas)
+	}
+	override method minijuegoCompletado() = cantLamparasPrendidas == 6
+	override method estadoInicial(){
+		cantLamparasPrendidas = 0
+		lamparas.forEach({l=>l.apagar()})
+	}
+	method nivel_Completado(idNivel){
+		lamparas.get(idNivel).encender()
+		cantLamparasPrendidas++
+	}
 }
 
 

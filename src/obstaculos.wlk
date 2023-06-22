@@ -36,6 +36,7 @@ class CajaMadera inherits ObstaculoAtravesable{
 	method tipo() = objetoMovible
 }
 
+
 class Puerta inherits ObstaculoNoAtravesable{
 	var property id
 	var property position
@@ -55,10 +56,11 @@ class Puerta inherits ObstaculoNoAtravesable{
 	}
 }
 
+
 class PuertaDer inherits Puerta{
 	override method bloquearPuerta(){
 		super()
-		image = "puertaCostadoDer.png" 
+		image = "puertaDerReja.png" 
 	}
 	method abrirPuerta() {
 		if(!estaBloqueada){
@@ -68,13 +70,14 @@ class PuertaDer inherits Puerta{
 	}
 }
 
+
 class PuertaIzq inherits Puerta{
 	method initialize(){
 		self.image("puertaCostadoIzq.png")
 	}
 	override method bloquearPuerta(){
 		super()
-		image = "puertaCostadoIzq.png" 
+		image = "puertaIzqReja.png" 
 	}
 	method abrirPuerta() {
 		if(!estaBloqueada){
@@ -87,6 +90,7 @@ class PuertaIzq inherits Puerta{
 		image = "puertaCostadoIzq.png"
 	}
 }
+
 
 class DecoAtravesable inherits ObstaculoAtravesable{
 	var property position
@@ -110,7 +114,6 @@ class PlacaPresion inherits ObstaculoAtravesable{
 	method tipo() = placaPresion
 }
 
-class FragmentoDeLLave inherits ObstaculoAtravesable{}
 
 class Palanca inherits ObstaculoAtravesable{
 	var property id
@@ -129,9 +132,41 @@ class Palanca inherits ObstaculoAtravesable{
 	method tipo() = palanca
 }
 
-class DecoNoAtravesable inherits ObstaculoNoAtravesable{}
+class LamparaNivel inherits ObstaculoNoAtravesable{
+	const id
+	var position
+	var image = "luzApagada.png"
+	method id() = id
+	method image() = image
+	method image(unaImagen){image = unaImagen}
+	method position() = position
+	method encender(){image = "luzPrendida.png"}
+	method tipo() = lampara
+	override method estadoInicial(){
+		image = "luzApagada.png"
+	}
+}
 
-object puertaFinal inherits ObstaculoNoAtravesable{}
+
+class Portal inherits Puerta{
+	method initialize(){
+		self.estadoinicial()
+	}
+	method estadoinicial(){
+		self.image("portalApagado.png")
+		estaBloqueada = true
+	}
+	method desbloquearPuerta(){
+		self.image("portalParaActivar.png")
+		estaBloqueada = false
+	}
+	method abrirPuerta() {
+		if(!estaBloqueada){
+			image = "portalActivo.png"
+			esAtravesable = true
+		}
+	}
+}
 
 
 //class Pizarron{

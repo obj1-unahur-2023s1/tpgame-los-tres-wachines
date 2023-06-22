@@ -6,3 +6,4 @@ object puerta{}
 object personaje{}
 object placaPresion{}
 object palanca{}
+object lampara{}

@@ -11,33 +11,26 @@ program juego{
 	
 	game.title("Escapa de la Mansion")
 	game.height(18)
-	game.width(28)
+	game.width(29)
 	game.boardGround("pisoBase.png")
 	game.addVisual(bordeNegro)
 	
 	var estaEnCartelFinal = false
 	
 	const pasilloPrincipal = new PasilloPrincipal(minijuego = new MinijuegoPasillo(), id = 10)
-	const miniJ1 = new MinijuegoCajasPlacas()
 	const habitacion0 = new HabitacionIzq(minijuego = new MinijuegoCajasPlacas(),id = 0)
 	const habitacion1 = new HabitacionIzq(minijuego = new MinijuegoPalancas(), id =1)
-	const habitacion2 = new HabitacionIzq(minijuego = miniJ1, id =2)
-	const habitacion3 = new HabitacionDer(minijuego = miniJ1, id =3)
-	const habitacion4 = new HabitacionDer(minijuego = miniJ1, id =4)
-	const habitacion5 = new HabitacionDer(minijuego = miniJ1, id =5)
+	const habitacion2 = new HabitacionIzq(minijuego = new MinijuegoCajasPlacas(), id =2)
+	const habitacion3 = new HabitacionDer(minijuego = new MinijuegoPalancas(), id =3)
+	const habitacion4 = new HabitacionDer(minijuego = new MinijuegoCajasPlacas(), id =4)
+	const habitacion5 = new HabitacionDer(minijuego = new MinijuegoPalancas(), id =5)
 	const habitaciones = [habitacion0,habitacion1,habitacion2,habitacion3,habitacion4,habitacion5]
-	//PRUEBAS
-	const pinche1 = new Trampa(position = game.at(9,8))
-	const pinche2 = new Trampa(position = game.at(9,7))
-	const pinche3 = new Trampa(position = game.at(9,6))
-	const pinche4 = new Trampa(position = game.at(9,5))
-	//
 	const cartelFinal = new CartelMuerte()
 	
 	var habitacionActual = pasilloPrincipal
 	var posDeAlexEnPasillo
 	
-//	habitacion1.agregarVisuales([pinche1,pinche2,pinche3,pinche4])
+	habitacion2.agregarVisual(new Trampa(position = game.at(2,2)))
 
 	pasilloPrincipal.mostrarVisuales()
 	cantidadVida.texto(alex.getVidas())
@@ -75,7 +68,7 @@ program juego{
 				if(puertaId.between(0,2)){
 					posDeAlexEnPasillo = objeto.position().right(1)
 					bordeNegro.image("NegroSalaHab"+alex.vistaActual()+".png")
-					alex.position(game.at(25,9))
+					alex.position(game.at(26,9))
 					habitacionActual = habitaciones.find({h=>h.id() == puertaId})
 					habitacionActual.mostrarVisuales()
 					game.addVisual(alex)
@@ -87,6 +80,8 @@ program juego{
 					habitacionActual.mostrarVisuales()
 					game.addVisual(alex)
 				}
+			}else if(puertaId == 666){
+				
 			}else{
 				bordeNegro.image("bordeNegroPasillo.png")
 				alex.position(posDeAlexEnPasillo)
@@ -101,10 +96,23 @@ program juego{
 //		}
 	})
 	
+	keyboard.o().onPressDo({
+		habitacionActual.esconderVisuales()
+		habitacionActual = pasilloPrincipal
+		habitacionActual.estadoInicial()
+		habitaciones.forEach({h=>h.estadoInicial()})
+		alex.position(game.center())
+		alex.setVidas(3)
+		cantidadVida.actualizar(alex)
+		bordeNegro.image("bordeNegroPasillo.png")
+		estaEnCartelFinal = false
+	})
+	
 	keyboard.r().onPressDo({
 		if(estaEnCartelFinal){
 			habitacionActual = pasilloPrincipal
 			habitacionActual.estadoInicial()
+			habitaciones.forEach({h=>h.estadoInicial()})
 			game.removeVisual(cartelFinal)
 			alex.position(game.center())
 			alex.setVidas(3)
@@ -135,6 +143,8 @@ program juego{
 					posPuerta = new Position(x = alex.position().x()+1 , y = alex.position().y())
 				}else if(alex.vistaActual() == "Izq"){
 					posPuerta = new Position(x = alex.position().x()-1 , y = alex.position().y())
+				}else if(alex.vistaActual() == "Arriba"){
+					posPuerta = new Position(x = alex.position().x() , y = alex.position().y()+1)
 				}
 				var puertaAdelante = game.getObjectsIn(posPuerta).find({o => o.tipo() == puerta})
 				if(!puertaAdelante.esAtravesable()){				
@@ -148,7 +158,7 @@ program juego{
 					alex.agarrarObjeto(caja)
 					habitacionActual.minijuego().removerElemento(caja)
 					game.removeVisual(caja)
-					alex.image("player"+alex.vistaActual()+"Caja.png")
+					alex.visualPersonaje(false)
 					if(objetosAManipular.any({o => o.tipo() == placaPresion})){
 						const placa = objetosAManipular.find({o=>o.tipo() == placaPresion})
 						placa.desactivar()
@@ -159,18 +169,18 @@ program juego{
 					habitacionActual.minijuego().agregarVisual(caja)
 					caja.position(alex.position())
 					game.addVisual(caja)
-					alex.image("player"+alex.vistaActual()+".png")
+					alex.visualPersonaje(false)
 					if(objetosAManipular.any({o => o.tipo() == placaPresion})){
 						const placa = objetosAManipular.find({o=>o.tipo() == placaPresion})
 						placa.activar()
-						habitacionActual.minijuego().sumarUnaPlaca()
+						habitacionActual.minijuego().sumarUnPunto()
 					}
 				//---palanca---
 				}else if(!alex.tieneLasManosOcupadas() and objetosAManipular.any({o => o.tipo() == palanca})){
-					const palanca = objetosAManipular.find({o=>o.tipo() == palanca})
-					if(!palanca.estaActiva()){						
-						palanca.activar()
-						habitacionActual.minijuego().sumarUnaPalanca(palanca.id())
+					const palancaActual = objetosAManipular.find({o=>o.tipo() == palanca})
+					if(!palancaActual.estaActiva()){						
+						palancaActual.activar()
+						habitacionActual.minijuego().sumarUnPuntoId(palancaActual.id())
 					}
 //					habitacionActual.listaMinijuego().add(palanca)
 				}
@@ -179,8 +189,11 @@ program juego{
 		if(habitacionActual.minijuego().minijuegoCompletado() and habitacionActual.minijuego().minijuegoEstaActivo()){
 			// implementar bloqueo de puerta hasta que se finalize el minijuego
 			habitacionActual.minijuego().desactivarMinijuego()
+			habitacionActual.abrirPuertas()
 			var puertaEnPasillo = pasilloPrincipal.visuales().find({o => (o.tipo() == puerta and o.id() == habitacionActual.id())})
 			puertaEnPasillo.bloquearPuerta()
+			pasilloPrincipal.minijuego().nivel_Completado(habitacionActual.id())
+			pasilloPrincipal.actualizarEstado()
 			game.say(alex,"minijuego Finalizado")
 		}
 	})
