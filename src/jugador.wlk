@@ -134,11 +134,7 @@ object alex {
 	method tieneLasManosOcupadas() = objetoEncima != null and objetoEncima.tipo() == caja
 	method objetoEnManos() = objetoEncima
 	method agarrarObjeto(unObjeto){objetoEncima = unObjeto}
-	method soltarObjeto(){
-		const objeto = objetoEncima
-		objetoEncima = null
-		return objeto
-	}
+	method soltarObjeto(){ objetoEncima = null }
 	
 	method estadoInicial(){
 		position = game.center()

@@ -30,11 +30,12 @@ program juego{
 
 	pasilloPrincipal.mostrarVisuales()
 	cantidadVida.texto(alex.getVidas())
-		
-	game.addVisual(cantidadVida)
-	game.addVisual(visualVida)
-	game.addVisual(alex)
 	
+	game.addVisual(marco)	
+	game.addVisual(objetoInventario)	
+	game.addVisual(cantidadVida)
+	//game.addVisual(visualVida)
+	game.addVisual(alex)
 	
 	game.onCollideDo(alex, {objeto => 
 		if(alex.colisionCon_DeTipo_(objeto, trampa)){
@@ -91,6 +92,7 @@ program juego{
 	
 	keyboard.r().onPressDo({
 		if(estaEnCartelFinal){
+			alex.estadoInicial()
 			habitacionActual = pasilloPrincipal
 			habitacionActual.estadoInicial()
 			habitaciones.forEach({h=>h.estadoInicial()})
@@ -137,7 +139,8 @@ program juego{
 					game.removeVisual(objetoManipulable)
 					alex.actualizarVisual()
 				}else if(alex.tieneLasManosOcupadas() and !alex.hayColisionConObjetoTipo_oTipo_(caja,bloqueForma)){
-					const objetoManipulable = alex.soltarObjeto()
+					const objetoManipulable = alex.objetoEnManos() //cambié acá
+					alex.soltarObjeto()
 					habitacionActual.minijuego().agregarVisual(objetoManipulable)
 					objetoManipulable.position(alex.position())
 					game.addVisual(objetoManipulable)
@@ -159,6 +162,7 @@ program juego{
 					alex.bloquearMovimiento()
 					ouh.play()
 					alex.recibirDanio()
+					cantidadVida.actualizar(alex)
 					game.schedule(500, {
 						if(alex.getVidas() == 0){
 							estaEnCartelFinal = true
