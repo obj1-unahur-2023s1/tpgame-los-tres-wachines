@@ -157,13 +157,13 @@ class MinijuegoPasillo inherits Minijuego{
 	const lamparas = []
 	var cantLamparasPrendidas = 0
 	method initialize(){
-		(1..3).forEach({ n =>
-			lamparas.add(new LamparaNivel(position = game.at(10+n,17),id = n-1))
-			lamparas.add(new LamparaNivel(position = game.at(14+n,17),id = n+2))
+		(1..2).forEach({ n =>
+			lamparas.add(new LamparaNivel(position = game.at(11+n,17),id = n-1))
+			lamparas.add(new LamparaNivel(position = game.at(14+n,17),id = n+1))
 		})
 		visualesMinijuego.addAll(lamparas)
 	}
-	override method minijuegoCompletado() = cantLamparasPrendidas == 6
+	override method minijuegoCompletado() = cantLamparasPrendidas == 4
 	override method estadoInicial(){
 		cantLamparasPrendidas = 0
 		lamparas.forEach({l=>l.estadoInicial()})

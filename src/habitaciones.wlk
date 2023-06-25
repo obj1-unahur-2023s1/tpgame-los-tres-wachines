@@ -46,13 +46,13 @@ class PasilloPrincipal inherits Habitacion{
 	method initialize(){
 		var idPuerta = 0
 		(1..16).forEach({posY =>
-			if(posY%4!=0 or posY == 16){
+			if(posY%6==0){
+				visuales.add(new PuertaIzq(position = game.at(6,posY), id = idPuerta))
+				visuales.add(new PuertaDer(position = game.at(22,posY), id = idPuerta+2))
+				idPuerta += 1
+			}else if(posY%6!=0){
 				visuales.add(new Pared(position = game.at(6,posY),image = "paredIzq.png"))
 				visuales.add(new Pared(position = game.at(22,posY),image = "paredDer.png"))	
-			}else if(posY%4==0 and posY<16){
-				visuales.add(new PuertaIzq(position = game.at(6,posY), id = idPuerta))
-				visuales.add(new PuertaDer(position = game.at(22,posY), id = idPuerta+3))
-				idPuerta += 1
 			}
 		})
 		visuales.add(new Portal(position = game.at(14,16),id = 666))

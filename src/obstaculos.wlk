@@ -41,7 +41,7 @@ class Trampa inherits ObstaculoAtravesable{
 class CajaMadera inherits ObstaculoAtravesable{
 	var property position
 	method image() = "caja.png"
-	method tipo() = objetoMovible
+	method tipo() = caja
 	override method estadoInicial(){}
 }
 
@@ -108,9 +108,13 @@ class DecoAtravesable inherits ObstaculoAtravesable{
 	override method estadoInicial(){}
 }
 
-class PlacaPresion inherits ObstaculoAtravesable{
+class Placa inherits ObstaculoAtravesable{
 	var property position
 	var property image = "placaPresion.png"
+	method tipo() = posaObjeto
+}
+
+class PlacaPresion inherits Placa{
 	var estaActiva = false
 	method estaActiva() = estaActiva
 	method activar(){
@@ -121,7 +125,12 @@ class PlacaPresion inherits ObstaculoAtravesable{
 		image = "placaPresion.png"
 		estaActiva = false
 	}
-	method tipo() = placaPresion
+}
+
+class PlacaRompeCabeza inherits Placa{
+	const forma
+	method color() = forma
+	override method estadoInicial(){}
 }
 
 
@@ -178,6 +187,12 @@ class Portal inherits Puerta{
 	}
 }
 
+class BloqueForma inherits ObstaculoAtravesable{
+	var property position
+	method image() = "rombo.png"
+	method tipo() = bloqueForma
+	override method estadoInicial(){}
+}
 
 //class Pizarron{
 //	
