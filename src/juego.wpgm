@@ -15,102 +15,161 @@ program juego{
 	game.boardGround("pisoBase.png")
 	game.addVisual(bordeNegro)
 	
-	var estaEnCartelFinal = false
+	var estaEnCartelMuerte = false
+	var estaEnCartelInicio = true
 	
 	const pasilloPrincipal = new PasilloPrincipal(minijuego = new MinijuegoPasillo(), id = 10)
 	const habitacion0 = new HabitacionIzq(minijuego = new MinijuegoCajasPlacas(),id = 0)
 	const habitacion1 = new HabitacionIzq(minijuego = new MinijuegoPalancas(), id =1)
-	const habitacion3 = new HabitacionDer(minijuego = new MinijuegoPalancas(), id =2)
-	const habitacion2 = new HabitacionDer(minijuego = new MinijuegoCajasPlacas(), id =3)
+	const habitacion3 = new HabitacionDer(minijuego = new MinijuegoSimon(), id =2)
+	const habitacion2 = new HabitacionDer(minijuego = new MinijuegoBloquesFormas(), id =3)
 	const habitaciones = [habitacion0,habitacion1,habitacion2,habitacion3]
-	const cartelFinal = new CartelMuerte()
+	const cartelMuerte = new Cartel(image = "cartelMuerte.png")
+	const cartelInicio = new Cartel(image = "cartelInicio.png")
+	const cartelFinal = new Cartel(image = "cartelJuegoCompletado.png")
+	const botonReiniciar = new BotonReinicio() 
+	const botonIniciar = new BotonInicio() 
+	const botonTerminar = new BotonTerminar() 
+	const musicaInicio = new Sonido(sonido = "cancionInicio.mp3",volumen = 0.1)
+	const musicaFondo = new Sonido(sonido = "cancionFondo.mp3",volumen = 0.02)
+	const musicaVictoria = new Sonido(sonido = "cancionVictoria.mp3",volumen = 0.1)
+	var musicaDerrota = new Sonido(sonido = "cancionDerrota.mp3",volumen = 0.1)
+	var sonidoNivelCompletado = new Sonido(sonido = "sonidoNivelCompletado.mp3",volumen = 1)
+	var sonidoDanio = new Sonido(sonido = "ouh.mp3",volumen = 1)	
 	
 	var habitacionActual = pasilloPrincipal
 	var posDeAlexEnPasillo
-
-	pasilloPrincipal.mostrarVisuales()
-	cantidadVida.texto(alex.getVidas())
 	
-	game.addVisual(marco)	
-	game.addVisual(objetoInventario)	
-	game.addVisual(cantidadVida)
-	//game.addVisual(visualVida)
+	const codigoMinijuegoCompletado = {
+		habitacionActual.minijuego().desactivarMinijuego()
+		habitacionActual.abrirPuertas()
+		var puertaEnPasillo = pasilloPrincipal.visuales().find({o => (o.tipo() == puerta and o.id() == habitacionActual.id())})
+		puertaEnPasillo.bloquearPuerta()
+		pasilloPrincipal.minijuego().nivel_Completado(habitacionActual.id())
+		pasilloPrincipal.actualizarEstado()
+		sonidoNivelCompletado.play()
+		sonidoNivelCompletado = new Sonido(sonido = "sonidoNivelCompletado.mp3",volumen = 1)
+		alex.sumarUnaVida()
+		cantidadVida.actualizar(alex)
+	}
+	
+	const codigoAlexRecibeDanio = {
+		sonidoDanio.play()
+		sonidoDanio = new Sonido(sonido = "ouh.mp3",volumen = 1)
+		alex.recibirDanio()
+		cantidadVida.actualizar(alex)
+		game.schedule(500, {
+			if(alex.getVidas() == 0){
+				estaEnCartelMuerte = true
+				habitacionActual.esconderVisuales()
+				game.addVisual(cartelMuerte)
+				game.addVisual(botonReiniciar)
+				game.addVisual(botonTerminar)
+				musicaFondo.pause()
+				musicaDerrota = new Sonido(sonido = "cancionDerrota.mp3",volumen = 0.1)
+				musicaDerrota.playLoop()
+			}
+		})
+	}
+	
+	const codigoActualizarHUD = {
+		game.removeVisual(marco)
+		game.addVisual(marco)
+		game.removeVisual(objetoInventario)
+		game.addVisual(objetoInventario)
+		cantidadVida.actualizar(alex)
+	}
+	 
 	game.addVisual(alex)
+	game.addVisual(cartelInicio)
+	game.addVisual(botonIniciar)
+	
+	musicaInicio.playLoop()
+	
+	keyboard.i().onPressDo({
+		if(estaEnCartelInicio){
+			botonIniciar.activar()
+			game.schedule(300,{
+				game.removeVisual(botonIniciar)
+				pasilloPrincipal.mostrarVisuales()
+				cantidadVida.texto(alex.getVidas())
+				game.addVisual(marco)	
+				game.addVisual(objetoInventario)	
+				game.addVisual(cantidadVida)
+				game.removeVisual(cartelInicio)
+				alex.estadoInicial()
+				musicaInicio.stop()
+				musicaFondo.playLoop()
+				estaEnCartelInicio = false
+			})
+		}
+	})
 	
 	game.onCollideDo(alex, {objeto => 
-		if(alex.colisionCon_DeTipo_(objeto, trampa)){
+		if(alex.objeto_DeTipo_(objeto,trampa)){
 			objeto.activarTrampa()
-			ouh.play()
-			alex.recibirDanio()
-			cantidadVida.actualizar(alex)
-			game.schedule(500, {
-				if(alex.getVidas() == 0){
-					estaEnCartelFinal = true
-					habitacionActual.esconderVisuales()
-					game.addVisual(cartelFinal)
-				}
-				objeto.estadoInicial()
-			})
+			codigoAlexRecibeDanio.apply()
 			//---colision con puerta---
-		}else if(alex.colisionCon_DeTipo_(objeto, puerta)){
+		}else if(alex.objeto_DeTipo_(objeto,puerta)){
 			const puertaId = objeto.id()
 			game.removeVisual(alex)
 			habitacionActual.esconderVisuales()
-			bordeNegro.image("NegroSalaHab"+alex.vistaActual()+".png")
 			if(puertaId.between(0,1)){
+				bordeNegro.image("NegroSalaHab"+alex.vistaActual()+".png")
 				posDeAlexEnPasillo = objeto.position().right(1)
 				habitacionActual = habitaciones.find({h=>h.id() == puertaId})
 				alex.position(game.at(26,9))
 			}else if(puertaId.between(2,3)){
+				bordeNegro.image("NegroSalaHab"+alex.vistaActual()+".png")
 				posDeAlexEnPasillo = objeto.position().left(1)
 				habitacionActual = habitaciones.find({h=>h.id() == puertaId})
 				alex.position(game.at(2,9))
-			}else if(puertaId == 666){
-				
 			}else{
 				bordeNegro.image("bordeNegroPasillo.png")
 				alex.position(posDeAlexEnPasillo)
 				habitacionActual = pasilloPrincipal
 			}
-			habitacionActual.mostrarVisuales()
-			game.addVisual(alex)
-			cantidadVida.actualizar(alex)
+			if(puertaId == 666){
+				musicaFondo.stop()
+				musicaVictoria.playLoop()
+				game.addVisual(cartelFinal)
+			}else{				
+				habitacionActual.mostrarVisuales()
+				game.addVisual(alex)
+			}
+			codigoActualizarHUD.apply()
 		}
 	})
 	
-	keyboard.o().onPressDo({
-		habitacionActual.esconderVisuales()
-		habitacionActual = pasilloPrincipal
-		habitacionActual.estadoInicial()
-		habitaciones.forEach({h=>h.estadoInicial()})
-		alex.position(game.center())
-		alex.setVidas(3)
-		cantidadVida.actualizar(alex)
-		bordeNegro.image("bordeNegroPasillo.png")
-		estaEnCartelFinal = false
-	})
-	
 	keyboard.r().onPressDo({
-		if(estaEnCartelFinal){
-			alex.estadoInicial()
-			habitacionActual = pasilloPrincipal
-			habitacionActual.estadoInicial()
-			habitaciones.forEach({h=>h.estadoInicial()})
-			game.removeVisual(cartelFinal)
-			alex.position(game.center())
-			alex.setVidas(3)
-			cantidadVida.actualizar(alex)
-			bordeNegro.image("bordeNegroPasillo.png")
-			estaEnCartelFinal = false
+		if(estaEnCartelMuerte){
+			botonReiniciar.activar()
+			game.schedule(300,{
+				alex.estadoInicial()
+				habitacionActual = pasilloPrincipal
+				habitacionActual.estadoInicial()
+				habitaciones.forEach({h=>h.estadoInicial()})
+				bordeNegro.image("bordeNegroPasillo.png")
+				game.removeVisual(cartelMuerte)
+				game.removeVisual(botonReiniciar)
+				game.removeVisual(botonTerminar)
+				musicaDerrota.stop()
+				musicaFondo.resume()
+				codigoActualizarHUD.apply()
+				estaEnCartelMuerte = false
+				botonReiniciar.estadoInicial()
+			})
 		}
 	})
 	
 	keyboard.t().onPressDo({
-		if(estaEnCartelFinal){
-			game.stop()
+		if(estaEnCartelMuerte){
+			botonTerminar.activar()
+			game.schedule(200,{
+				game.stop()				
+			})
 		}
 	})
-
 	
 	keyboard.w().onPressDo({alex.moverArriba()})
 	keyboard.a().onPressDo({alex.moverIzquierda()})
@@ -118,7 +177,7 @@ program juego{
 	keyboard.d().onPressDo({alex.moverDerecha()})
 	
 	keyboard.e().onPressDo({
-		if(!estaEnCartelFinal and alex.movimientoPermitido()){
+		if(!estaEnCartelMuerte and alex.movimientoPermitido()){
 			//---puerta---
 			if(alex.hayObstaculo_Adelante(puerta)){
 				var puertaAdelante = alex.obtenerObjetosAdelante().find({o => o.tipo() == puerta})
@@ -134,21 +193,28 @@ program juego{
 					}else{
 						objetoManipulable = alex.objetoDeTipo_EnColision(bloqueForma)
 					}
+					objetoInventario.image(objetoManipulable.image())
 					alex.agarrarObjeto(objetoManipulable) 
 					habitacionActual.minijuego().removerElemento(objetoManipulable)
 					game.removeVisual(objetoManipulable)
 					alex.actualizarVisual()
 				}else if(alex.tieneLasManosOcupadas() and !alex.hayColisionConObjetoTipo_oTipo_(caja,bloqueForma)){
-					const objetoManipulable = alex.objetoEnManos() //cambié acá
+					const objetoManipulable = alex.objetoEnManos() 
 					alex.soltarObjeto()
+					objetoInventario.image("vacio.png")
 					habitacionActual.minijuego().agregarVisual(objetoManipulable)
 					objetoManipulable.position(alex.position())
+					game.removeVisual(alex)
 					game.addVisual(objetoManipulable)
+					game.addVisual(alex)
 					alex.actualizarVisual()
 					if(alex.hayColisionConObjetoTipo_(posaObjeto)){
 						const placa = alex.objetoDeTipo_EnColision(posaObjeto)
 						placa.activar()
 						habitacionActual.minijuego().recibirAccion(placa)
+					}
+					if(habitacionActual.minijuego().estaEnEstadoCritico()){
+						codigoAlexRecibeDanio.apply()
 					}
 				//---palanca---
 				}else if(!alex.tieneLasManosOcupadas() and alex.hayColisionConObjetoTipo_(palanca)){
@@ -157,30 +223,27 @@ program juego{
 						palancaActual.activar()
 						habitacionActual.minijuego().recibirAccion(palancaActual)
 					}
-				}
-				if(habitacionActual.minijuego().estaEnEstadoCritico()){
-					alex.bloquearMovimiento()
-					ouh.play()
-					alex.recibirDanio()
-					cantidadVida.actualizar(alex)
-					game.schedule(500, {
-						if(alex.getVidas() == 0){
-							estaEnCartelFinal = true
-							habitacionActual.esconderVisuales()
-							game.addVisual(cartelFinal)
-						}
-					})
+					if(habitacionActual.minijuego().estaEnEstadoCritico()){
+						codigoAlexRecibeDanio.apply()
+					}
 				}
 			} 
 		}
 		if(habitacionActual.minijuego().minijuegoCompletado() and habitacionActual.minijuego().minijuegoEstaActivo()){
-			habitacionActual.minijuego().desactivarMinijuego()
-			habitacionActual.abrirPuertas()
-			var puertaEnPasillo = pasilloPrincipal.visuales().find({o => (o.tipo() == puerta and o.id() == habitacionActual.id())})
-			puertaEnPasillo.bloquearPuerta() // mover dentro del codigo de la habitacion (?
-			pasilloPrincipal.minijuego().nivel_Completado(habitacionActual.id())
-			pasilloPrincipal.actualizarEstado()
-			game.say(alex,"minijuego Finalizado")
+			codigoMinijuegoCompletado.apply()
+		}
+	})
+	
+	keyboard.space().onPressDo({
+		if(!estaEnCartelMuerte and alex.movimientoPermitido() and alex.hayColisionConObjetoTipo_(placaSimon)){
+			var unaPlacaSimon = alex.objetoDeTipo_EnColision(placaSimon)
+			habitacionActual.minijuego().recibirAccion(unaPlacaSimon)
+			if(habitacionActual.minijuego().estaEnEstadoCritico()){
+						codigoAlexRecibeDanio.apply()
+					}
+		}
+		if(habitacionActual.minijuego().minijuegoCompletado() and habitacionActual.minijuego().minijuegoEstaActivo()){
+			codigoMinijuegoCompletado.apply()
 		}
 	})
 

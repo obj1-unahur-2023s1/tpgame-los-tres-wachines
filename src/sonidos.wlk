@@ -1,9 +1,28 @@
 import wollok.game.*
 
-object ouh {
-	
+class Sonido{
+	const volumen
+	const sonido
+	const musica = game.sound(sonido)
+	method initialize(){
+		musica.volume(volumen)
+	}
 	method play(){
-		game.sound("ouh.mp3").play()
+		musica.play()
+	}
+	method playLoop(){
+		musica.shouldLoop(true)
+		game.schedule(100, { musica.play()} )
+	}
+	method stop(){
+		musica.stop()
+	}
+	method pause(){
+		musica.pause()
+	}
+	method resume(){
+		musica.resume()
 	}
 }
+
 

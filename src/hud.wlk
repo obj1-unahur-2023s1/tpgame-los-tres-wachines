@@ -7,8 +7,9 @@ object visualVida {
 */
 
 object cantidadVida {
-	var property texto
-	method position() = game.at(1,0)  //original ---> method position() = game.at(1,game.height()-1)
+	var texto
+	method texto(unTxt) {texto = unTxt}
+	method position() = game.at(1,0)  
 	method textColor() = "#ffffff"
 	method text() = "x" + texto.toString()
 	method tipo(){}
@@ -20,22 +21,31 @@ object cantidadVida {
 }
 
 object marco{
-	var property image = "marcoEjemplo.png"
-	var property position = game.at(0,0)
+	const image = "marcoEjemplo.png"
+	const position = game.at(0,0)
+	method image() = image
+	method position() = position
 }
 
 object objetoInventario{
-	var property image = "formaDiamante.png"
+	var image = "vacio.png"
 	method position() = game.at(3,0)
+	method image() = image
+	method image(unaImagen) {image = unaImagen}
 }
 
 object bordeNegro{
-	var property image = "bordeNegroPasillo.png"
+	var image = "bordeNegroPasillo.png"
 	method position() = game.origin()
+	method image() = image
+	method image(unaImagen) {image = unaImagen}
 }
 
-class CartelMuerte{
-	var property image = "ct2.png"
-	var property position = game.origin()
+class Cartel{
+	var image 
+	const position = game.origin()
+	method image() = image
+	method image(unaImagen) {image = unaImagen}
+	method position() = position
 	method tipo(){}
 }

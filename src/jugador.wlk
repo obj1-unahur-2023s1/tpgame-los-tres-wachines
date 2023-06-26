@@ -90,7 +90,7 @@ object alex {
 
 	method getVidas() = vidas
 	method setVidas(cantVidas) {vidas = cantVidas}
-	method sumarUnaVida() {vidas = 6.min(vidas+1)}
+	method sumarUnaVida() {vidas = 3.min(vidas+1)}
 	method recibirDanio() {
 		self.bloquearMovimiento()
 		vidas = 0.max(vidas-1)
@@ -109,7 +109,7 @@ object alex {
 	// --- IMAGEN ---
 	
 	method actualizarVisual(){
-		if(self.tieneLasManosOcupadas()){	
+		if(self.tieneLasManosOcupadas() and self.objeto_DeTipo_(objetoEncima,caja)){	
 			image = "player"+vistaActual+"Caja.png"
 		}else {
 			image = "player"+vistaActual+".png"
@@ -117,7 +117,7 @@ object alex {
 	}
 	
 	method actualizarVisualConDanio(){
-		if(self.tieneLasManosOcupadas()){	
+		if(self.tieneLasManosOcupadas() and self.objeto_DeTipo_(objetoEncima,caja)){	
 			image = "player"+vistaActual+"DañoConCaja.png"
 		}else {
 			image = "player"+vistaActual+"Daño.png"
@@ -127,11 +127,11 @@ object alex {
 	method image() = image
 	
 	
-	// --- COLISION ---
+	// --- COLISION Y ACCIONES---
 	
-	method colisionCon_DeTipo_(objeto,tipo) = objeto.tipo() == tipo
+	method objeto_DeTipo_(objeto,tipo) = objeto.tipo() == tipo
 	method tipo() = personaje
-	method tieneLasManosOcupadas() = objetoEncima != null and objetoEncima.tipo() == caja
+	method tieneLasManosOcupadas() = objetoEncima != null 
 	method objetoEnManos() = objetoEncima
 	method agarrarObjeto(unObjeto){objetoEncima = unObjeto}
 	method soltarObjeto(){ objetoEncima = null }

@@ -1,65 +1,67 @@
 import tipos.*
 import wollok.game.*
 
-class ObstaculoNoAtravesable{
+class Obstaculo{
+	var image
+	var position
+	method image() = image
+	method image(unaImagen){image = unaImagen}
+	method position() = position
+	method position(unaPos){position = unaPos}
+	method estadoInicial()
+}
+
+class ObstaculoNoAtravesable inherits Obstaculo{
 	method esAtravesable() = false
-	method estadoInicial()
 }
 
-class ObstaculoAtravesable{
+class ObstaculoAtravesable inherits Obstaculo{
 	method esAtravesable() = true
-	method estadoInicial()
 }
 
-class ObstaculoHibrido{
+class ObstaculoHibrido inherits Obstaculo{
 	var esAtravesable = false
 	method esAtravesable() = esAtravesable
 	method volverAtravesable(){esAtravesable = true}
 	method volverNoAtravesable(){esAtravesable = false}
-	method estadoInicial()
 }
 
 class Pared inherits ObstaculoNoAtravesable{
-	var property position
-	var property image
 	method tipo() = bloqueSolido
 	override method estadoInicial(){}
 }
 
-class Trampa inherits ObstaculoAtravesable{
-	var property image = "pincheCerrado.png"
-	var property position
+class Trampa inherits ObstaculoAtravesable(image = "pincheCerrado.png"){
 	method tipo() = trampa
 	method activarTrampa(){
-		image = "pincheAbierto.png"
+		self.image("pincheAbierto.png")
+		game.schedule(500,{
+			self.estadoInicial()
+		})
 	}
 	override method estadoInicial(){
-		image = "pincheCerrado.png"
+		self.image("pincheCerrado.png")
 	}
 }
 
-class CajaMadera inherits ObstaculoAtravesable{
-	var property position
-	method image() = "caja.png"
+class CajaMadera inherits ObstaculoAtravesable(image = "caja.png"){
+	override method image() = "caja.png"
 	method tipo() = caja
 	override method estadoInicial(){}
 }
 
 
-class Puerta inherits ObstaculoHibrido{
-	var property id
-	var property position
+class Puerta inherits ObstaculoHibrido(image = "puertaCostadoDer.png"){
+	const id
 	var estaBloqueada = false
-	var image = "puertaCostadoDer.png"
-	method image() = image
-	method image(unaImagen) {image = unaImagen}
+	method id() = id
 	method tipo() = puerta
 	method bloquearPuerta(){
 		self.volverNoAtravesable()
 		estaBloqueada = true
 	}
 	override method estadoInicial() {
-		image = "puertaCostadoDer.png"
+		self.image("puertaCostadoDer.png")
 		self.volverNoAtravesable()
 		estaBloqueada = false
 	}
@@ -69,11 +71,11 @@ class Puerta inherits ObstaculoHibrido{
 class PuertaDer inherits Puerta{
 	override method bloquearPuerta(){
 		super()
-		image = "puertaDerReja.png" 
+		self.image("puertaDerReja.png")
 	}
 	method abrirPuerta() {
 		if(!estaBloqueada){
-			image = "puertaCostadoDerAbierta.png"
+			self.image("puertaCostadoDerAbierta.png")
 			self.volverAtravesable()
 		}
 	}
@@ -86,83 +88,90 @@ class PuertaIzq inherits Puerta{
 	}
 	override method bloquearPuerta(){
 		super()
-		image = "puertaIzqReja.png" 
+		self.image("puertaIzqReja.png")
 	}
 	method abrirPuerta() {
 		if(!estaBloqueada){
-			image = "puertaCostadoIzqAbierta.png"
+			self.image("puertaCostadoIzqAbierta.png")
 			self.volverAtravesable()
 		}
 	}
 	override method estadoInicial() {
 		super()
-		image = "puertaCostadoIzq.png"
+		self.image("puertaCostadoIzq.png")
 	}
 }
 
 
 class DecoAtravesable inherits ObstaculoAtravesable{
-	var property position
-	var property image
 	method tipo() = decoracion
 	override method estadoInicial(){}
 }
 
-class Placa inherits ObstaculoAtravesable{
-	var property position
-	var property image = "placaPresion.png"
+class DecoNoAtravesable inherits ObstaculoNoAtravesable{
+	method tipo() = decoracion
+	override method estadoInicial(){}
+}
+
+class Placa inherits ObstaculoAtravesable(image = "placaPresion.png"){
+	var estaActiva = false
+	method estaActiva() = estaActiva
+	method activar(){estaActiva = true}
+	override method estadoInicial(){estaActiva = false}
 	method tipo() = posaObjeto
 }
 
 class PlacaPresion inherits Placa{
-	var estaActiva = false
-	method estaActiva() = estaActiva
-	method activar(){
-		image = "placaPresionActiva.png"
-		estaActiva = true
+	override method activar(){
+		super()
+		self.image("placaPresionActiva.png")
 	}
 	override method estadoInicial(){
-		image = "placaPresion.png"
-		estaActiva = false
+		super()
+		self.image("placaPresion.png")
 	}
 }
 
 class PlacaRompeCabeza inherits Placa{
 	const forma
-	method color() = forma
-	override method estadoInicial(){}
+	method initialize(){
+		self.image("placa"+forma+".png")		
+	}
+	method forma() = forma
+	override method estadoInicial(){
+		super()
+		self.image("placa"+forma+".png")
+	}
+	override method activar(){
+		super()
+		self.image("placa"+forma+"Activa.png")
+	}
 }
 
 
-class Palanca inherits ObstaculoAtravesable{
-	var property id
-	var property position
-	var property image = "palanca.png"
+class Palanca inherits ObstaculoAtravesable(image = "palanca.png"){
+	const id
 	var estaActiva = false
+	method id() = id
 	method estaActiva() = estaActiva
 	method activar(){
-		image = "palancaActiva.png"
+		self.image("palancaActiva.png")
 		estaActiva = true
 	}
 	override method estadoInicial(){
-		image = "palanca.png"
+		self.image("palanca.png")
 		estaActiva = false
 	}
 	method tipo() = palanca
 }
 
-class LamparaNivel inherits ObstaculoNoAtravesable{
+class LamparaNivel inherits ObstaculoNoAtravesable(image = "luzApagada.png"){
 	const id
-	var position
-	var image = "luzApagada.png"
 	method id() = id
-	method image() = image
-	method image(unaImagen){image = unaImagen}
-	method position() = position
-	method encender(){image = "luzPrendida.png"}
+	method encender(){self.image("luzPrendida.png")}
 	method tipo() = lampara
 	override method estadoInicial(){
-		image = "luzApagada.png"
+		self.image("luzApagada.png")
 	}
 }
 
@@ -181,19 +190,53 @@ class Portal inherits Puerta{
 	}
 	method abrirPuerta() {
 		if(!estaBloqueada){
-			image = "portalActivo.png"
+			self.image("portalActivo.png")
 			self.volverAtravesable()
 		}
 	}
 }
 
 class BloqueForma inherits ObstaculoAtravesable{
-	var property position
-	method image() = "rombo.png"
+	const forma
+	const posicionInicial = position
+	method forma() = forma
 	method tipo() = bloqueForma
-	override method estadoInicial(){}
+	override method estadoInicial(){
+		position = posicionInicial
+	}
 }
 
-//class Pizarron{
-//	
-//}
+class PlacaSimon inherits ObstaculoAtravesable{
+	const id
+	method id() = id
+	override method estadoInicial(){}
+	method tipo() = placaSimon
+}
+
+
+class BotonInicio inherits ObstaculoAtravesable(image = "iniciar.png", position = game.at(13,3)){
+	method activar(){
+		self.image("iniciarActivo.png")
+	}
+	override method estadoInicial(){
+		self.image("iniciar.png")
+	}
+}
+
+class BotonReinicio inherits BotonInicio(image = "reiniciar.png", position = game.at(9,3)){
+	override method activar(){
+		self.image("reiniciarActivo.png")
+	}
+	override method estadoInicial(){
+		self.image("reiniciar.png")
+	}
+}
+
+class BotonTerminar inherits BotonInicio(image = "terminar.png", position = game.at(17,3)){
+	override method activar(){
+		self.image("terminarActivo.png")
+	}
+	override method estadoInicial(){
+		self.image("terminar.png")
+	}
+}

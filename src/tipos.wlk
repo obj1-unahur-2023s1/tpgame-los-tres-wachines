@@ -8,3 +8,4 @@ object personaje{}
 object posaObjeto{}
 object palanca{}
 object lampara{}
+object placaSimon{}
