@@ -18,19 +18,19 @@
 ## Reglas de Juego / Instrucciones
 
 Movimiento:
-    w - Adelante
-    a - Izquierda
-    s - Atras
-    d - Derecha
+    * w - Adelante
+    * a - Izquierda
+    * s - Atras
+    * d - Derecha
 
 Acciones:
-    e - Interactuar con puertas, palancas, cajas y formas de rompecabeza
-    espacio / barra espaciadora - Activar placa de Simon dice
+    * e - Interactuar con puertas, palancas, cajas y formas de rompecabeza
+    * espacio / barra espaciadora - Activar placa de Simon dice
 
 Juego:
-    i - Iniciar juego (solo durante la pantalla de inicio)
-    r - Reintentar juego (durante la pantalla de muerte)
-    t - Terminar juego (durante la pantalla de muerte)
+    * i - Iniciar juego (solo durante la pantalla de inicio)
+    * r - Reintentar juego (durante la pantalla de muerte)
+    * t - Terminar juego (durante la pantalla de muerte)
 
 
 ## Otros
