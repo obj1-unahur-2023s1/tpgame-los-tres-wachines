@@ -6,7 +6,7 @@ import jugador.*
 
 class Habitacion{
 	var id
-	const visuales = []
+	const visuales = new List()
 	var minijuego 
 	
 	method id() = id
@@ -26,8 +26,8 @@ class Habitacion{
 		}
 		minijuego.esconderVisuales()
 	}
-	method removerVisualesDeTipo_En_(tipo,pos){
-		const objetosARemover = game.getObjectsIn(pos).filter({o => o.tipo() == tipo})
+	method removerVisualesDeTipo_En_(tipoDeObjeto,pos){
+		const objetosARemover = game.getObjectsIn(pos).filter({o => o.esDeTipo(tipoDeObjeto)})
 		objetosARemover.forEach({o => game.removeVisual(o)})
 		visuales.removeAll(objetosARemover)
 	}
@@ -44,6 +44,7 @@ class Habitacion{
 
 class PasilloPrincipal inherits Habitacion{
 	method initialize(){
+		visuales.clear()
 		var idPuerta = 0
 		(1..16).forEach({posY =>
 			if(posY%6==0){
@@ -64,7 +65,7 @@ class PasilloPrincipal inherits Habitacion{
 	}
 	override method actualizarEstado(){
 		if(minijuego.minijuegoCompletado()){
-			const portalFinal = visuales.find({v => v.tipo() == puerta and v.id() == 666})
+			const portalFinal = visuales.find({v => v.esDeTipo(puerta) and v.id() == 666})
 			minijuego.desactivarMinijuego()
 			portalFinal.desbloquearPuerta()
 		}
@@ -72,7 +73,8 @@ class PasilloPrincipal inherits Habitacion{
 }
 
 class HabitacionIzq inherits Habitacion{
-	override method initialize(){
+	method initialize(){
+		visuales.clear()
 		(1..16).forEach({posY =>
 			if(posY != 9){
 				visuales.add(new Pared(position = game.at(27,posY),image = "paredDer.png"))
@@ -85,16 +87,17 @@ class HabitacionIzq inherits Habitacion{
 	}
 	override method estadoInicial(){
 		super()
-		visuales.find({v=>v.tipo() == puerta}).bloquearPuerta()
+		visuales.find({v=>v.esDeTipo(puerta)}).bloquearPuerta()
 	}
 	method abrirPuertas(){
-		visuales.find({v=>v.tipo() == puerta}).estadoInicial()
+		visuales.find({v=>v.esDeTipo(puerta)}).estadoInicial()
 	}
 }
 
 
 class HabitacionDer inherits HabitacionIzq{
-	override method initialize(){
+	method initialize(){
+		visuales.clear()
 		(1..16).forEach({posY =>
 			if(posY != 9){
 				visuales.add(new Pared(position = game.at(1,posY),image = "paredIzq.png"))

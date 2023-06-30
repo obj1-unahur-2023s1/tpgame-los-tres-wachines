@@ -9,3 +9,4 @@ object posaObjeto{}
 object palanca{}
 object lampara{}
 object placaSimon{}
+object hud{}

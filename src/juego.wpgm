@@ -31,10 +31,10 @@ program juego{
 	const botonIniciar = new BotonInicio() 
 	const botonTerminar = new BotonTerminar() 
 	const musicaInicio = new Sonido(sonido = "cancionInicio.mp3",volumen = 0.1)
-	const musicaFondo = new Sonido(sonido = "cancionFondo.mp3",volumen = 0.02)
+	const musicaFondo = new Sonido(sonido = "cancionFondo.mp3",volumen = 0.04)
 	const musicaVictoria = new Sonido(sonido = "cancionVictoria.mp3",volumen = 0.1)
 	var musicaDerrota = new Sonido(sonido = "cancionDerrota.mp3",volumen = 0.1)
-	var sonidoNivelCompletado = new Sonido(sonido = "sonidoNivelCompletado.mp3",volumen = 1)
+	var sonidoNivelCompletado = new Sonido(sonido = "sonidoNivelCompletado.mp3",volumen = 0.5)
 	var sonidoDanio = new Sonido(sonido = "ouh.mp3",volumen = 1)	
 	
 	var habitacionActual = pasilloPrincipal
@@ -43,23 +43,23 @@ program juego{
 	const codigoMinijuegoCompletado = {
 		habitacionActual.minijuego().desactivarMinijuego()
 		habitacionActual.abrirPuertas()
-		var puertaEnPasillo = pasilloPrincipal.visuales().find({o => (o.tipo() == puerta and o.id() == habitacionActual.id())})
+		var puertaEnPasillo = pasilloPrincipal.visuales().find({o => (o.esDeTipo(puerta) and o.id() == habitacionActual.id())})
 		puertaEnPasillo.bloquearPuerta()
 		pasilloPrincipal.minijuego().nivel_Completado(habitacionActual.id())
 		pasilloPrincipal.actualizarEstado()
 		sonidoNivelCompletado.play()
 		sonidoNivelCompletado = new Sonido(sonido = "sonidoNivelCompletado.mp3",volumen = 1)
 		alex.sumarUnaVida()
-		cantidadVida.actualizar(alex)
+		marco.actualizarVidas(alex.getVidas())
 	}
 	
 	const codigoAlexRecibeDanio = {
 		sonidoDanio.play()
 		sonidoDanio = new Sonido(sonido = "ouh.mp3",volumen = 1)
 		alex.recibirDanio()
-		cantidadVida.actualizar(alex)
-		game.schedule(500, {
-			if(alex.getVidas() == 0){
+		marco.actualizarVidas(alex.getVidas())
+		if(alex.estaMuerto()){
+			game.schedule(2000, {
 				estaEnCartelMuerte = true
 				habitacionActual.esconderVisuales()
 				game.addVisual(cartelMuerte)
@@ -68,16 +68,14 @@ program juego{
 				musicaFondo.pause()
 				musicaDerrota = new Sonido(sonido = "cancionDerrota.mp3",volumen = 0.1)
 				musicaDerrota.playLoop()
-			}
-		})
+			})
+		}
 	}
-	
 	const codigoActualizarHUD = {
 		game.removeVisual(marco)
 		game.addVisual(marco)
 		game.removeVisual(objetoInventario)
 		game.addVisual(objetoInventario)
-		cantidadVida.actualizar(alex)
 	}
 	 
 	game.addVisual(alex)
@@ -92,10 +90,9 @@ program juego{
 			game.schedule(300,{
 				game.removeVisual(botonIniciar)
 				pasilloPrincipal.mostrarVisuales()
-				cantidadVida.texto(alex.getVidas())
+				marco.actualizarVidas(alex.getVidas())
 				game.addVisual(marco)	
 				game.addVisual(objetoInventario)	
-				game.addVisual(cantidadVida)
 				game.removeVisual(cartelInicio)
 				alex.estadoInicial()
 				musicaInicio.stop()
@@ -156,6 +153,7 @@ program juego{
 				musicaDerrota.stop()
 				musicaFondo.resume()
 				codigoActualizarHUD.apply()
+				marco.actualizarVidas(alex.getVidas())
 				estaEnCartelMuerte = false
 				botonReiniciar.estadoInicial()
 			})
@@ -180,7 +178,7 @@ program juego{
 		if(!estaEnCartelMuerte and alex.movimientoPermitido()){
 			//---puerta---
 			if(alex.hayObstaculo_Adelante(puerta)){
-				var puertaAdelante = alex.obtenerObjetosAdelante().find({o => o.tipo() == puerta})
+				var puertaAdelante = alex.obtenerObjetosAdelante().find({o => o.esDeTipo(puerta)})
 				if(!puertaAdelante.esAtravesable()){				
 					puertaAdelante.abrirPuerta()
 				}

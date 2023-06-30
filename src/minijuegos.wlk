@@ -148,7 +148,7 @@ class MinijuegoPalancas inherits Minijuego{
 			self.activarEstadoCritico()
 			combinacionIngresada.clear()
 			puntos = 0
-			visualesMinijuego.filter({v=>v.tipo() == palanca}).forEach({p=>p.estadoInicial()})
+			visualesMinijuego.filter({v=>v.esDeTipo(palanca)}).forEach({p=>p.estadoInicial()})
 		}
 	}
 	
@@ -229,7 +229,7 @@ class MinijuegoBloquesFormas inherits Minijuego{
 	}
 	
 	method recibirAccion(unaPlaca){
-		const bloque = game.getObjectsIn(unaPlaca.position()).find({o=>o.tipo() == bloqueForma})
+		const bloque = game.getObjectsIn(unaPlaca.position()).find({o=>o.esDeTipo(bloqueForma)})
 		if(unaPlaca.forma() == bloque.forma()){
 			self.desactivarEstadoCritico()
 			self.sumarUnPunto()			
@@ -310,9 +310,9 @@ class MinijuegoSimon inherits Minijuego{
 	
 	method recibirAccion(objeto){
 		if(minijuegoActivo){	
-			if(objeto.tipo() == palanca){
+			if(objeto.esDeTipo(palanca)){
 				self.mostrarCombinacion()
-			}else if(objeto.tipo() == placaSimon){
+			}else if(objeto.esDeTipo(placaSimon)){
 				combinacionIngresada.add(objeto.id())
 				if(jugada == jugadasPrevistas and self.verificarColores()){
 					self.desactivarEstadoCritico()

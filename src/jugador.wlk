@@ -6,7 +6,7 @@ import hud.*
 object alex {
 	var property position = game.center()
 	var movimientoPermitido = true
-	var image = "playerDer.png"
+	var property image = "playerDer.png"
 	var posicionAnterior = position
 	var property vistaActual = "Abajo"
 	var vistaAnterior = "Abajo"
@@ -75,7 +75,7 @@ object alex {
 		return game.getObjectsIn(game.at(position.x()+sumaX, position.y()+sumaY))
 	}
 	
-	method hayObstaculo_Adelante(tipo) = self.obtenerObjetosAdelante().any({o => o.tipo() == tipo})
+	method hayObstaculo_Adelante(tipoDeObjeto) = self.obtenerObjetosAdelante().any({o => o.esDeTipo(tipoDeObjeto)})
 	
 	method objetoAdelanteEsAtravesable() {
 		const objetosAdelante = self.obtenerObjetosAdelante()
@@ -99,12 +99,18 @@ object alex {
 			position = posicionAnterior
 		})
 		game.schedule(500, {
-			self.actualizarVisual()
+			if(self.estaMuerto()){
+				image = "alexMuerto.png"
+			}else{			
+				self.actualizarVisual()
+			}
 		})
 		game.schedule(700, {
 			self.permitirMovimiento()
 		})
 	}
+	
+	method estaMuerto() = vidas == 0
 
 	// --- IMAGEN ---
 	
@@ -129,7 +135,7 @@ object alex {
 	
 	// --- COLISION Y ACCIONES---
 	
-	method objeto_DeTipo_(objeto,tipo) = objeto.tipo() == tipo
+	method objeto_DeTipo_(objeto,tipoDeObjeto) = objeto.esDeTipo(tipoDeObjeto)
 	method tipo() = personaje
 	method tieneLasManosOcupadas() = objetoEncima != null 
 	method objetoEnManos() = objetoEncima
@@ -147,7 +153,7 @@ object alex {
 		vidas = 3
 	}
 
-	method hayColisionConObjetoTipo_(tipoDeObjeto) = game.colliders(self).any({o=>o.tipo() == tipoDeObjeto})
+	method hayColisionConObjetoTipo_(tipoDeObjeto) = game.colliders(self).any({o=>o.esDeTipo(tipoDeObjeto)})
 	method hayColisionConObjetoTipo_oTipo_(tipo1,tipo2) = self.hayColisionConObjetoTipo_(tipo1) or self.hayColisionConObjetoTipo_(tipo2)
-	method objetoDeTipo_EnColision(tipoDeObjeto) = game.colliders(self).find({o=>o.tipo() == tipoDeObjeto})
+	method objetoDeTipo_EnColision(tipoDeObjeto) = game.colliders(self).find({o=>o.esDeTipo(tipoDeObjeto)})
 }
