@@ -59,6 +59,7 @@ object objetoInventario{
 	method esAtravesable()=true
 	method tipo() = hud
 	method esDeTipo(unTipo) = self.tipo() == unTipo
+	method estadoInicial() {self.image("Minijuegos/vacio.png")}
 }
 
 object bordeNegro{
@@ -80,4 +81,16 @@ class Cartel{
 	method tipo() = hud
 	method esAtravesable()=true
 	method esDeTipo(unTipo) = self.tipo() == unTipo
+}
+
+class CartelInicio inherits Cartel{
+	var nroImagen = 0
+	method imagenSiguiente(){
+		nroImagen = 5.min(nroImagen + 1)
+		self.image("Carteles/cartelIntro"+nroImagen+".png")
+	}
+	method imagenAnterior(){
+		nroImagen = 0.max(nroImagen - 1)
+		self.image("Carteles/cartelIntro"+nroImagen+".png")
+	}
 }

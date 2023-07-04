@@ -215,31 +215,3 @@ class PlacaSimon inherits ObstaculoAtravesable{
 	override method tipo() = placaSimon
 }
 
-
-class BotonInicio inherits ObstaculoAtravesable(image = "Carteles/iniciar.png", position = game.at(13,3)){
-	method activar(){
-		self.image("Carteles/iniciarActivo.png")
-	}
-	override method estadoInicial(){
-		self.image("Carteles/iniciar.png")
-	}
-	override method tipo() = decoracion
-}
-
-class BotonReinicio inherits BotonInicio(image = "Carteles/reiniciar.png", position = game.at(9,3)){
-	override method activar(){
-		self.image("Carteles/reiniciarActivo.png")
-	}
-	override method estadoInicial(){
-		self.image("Carteles/reiniciar.png")
-	}
-}
-
-class BotonTerminar inherits BotonInicio(image = "Carteles/terminar.png", position = game.at(17,3)){
-	override method activar(){
-		self.image("Carteles/terminarActivo.png")
-	}
-	override method estadoInicial(){
-		self.image("Carteles/terminar.png")
-	}
-}

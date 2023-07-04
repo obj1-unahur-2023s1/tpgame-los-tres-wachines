@@ -12,6 +12,8 @@ object alex {
 	var vistaAnterior = "Abajo"
 	var objetoEncima = null
 	var vidas = 3
+	var recibioDanio = false
+	var pasoNro = 1
 	
 	// --- MOVIMIENTO ---
 	
@@ -93,6 +95,7 @@ object alex {
 	method sumarUnaVida() {vidas = 3.min(vidas+1)}
 	method recibirDanio() {
 		self.bloquearMovimiento()
+		recibioDanio = true
 		vidas = 0.max(vidas-1)
 		game.schedule(200, {
 			self.actualizarVisualConDanio()
@@ -107,6 +110,7 @@ object alex {
 		})
 		game.schedule(700, {
 			self.permitirMovimiento()
+			recibioDanio = false
 		})
 	}
 	
@@ -118,8 +122,18 @@ object alex {
 		if(self.tieneLasManosOcupadas() and self.objeto_DeTipo_(objetoEncima,caja)){	
 			image = "Alex/player"+vistaActual+"Caja.png"
 		}else {
-			image = "Alex/player"+vistaActual+".png"
+			image = "Alex/player"+vistaActual+pasoNro+".png"
+			game.schedule(50,{
+				self.bloquearMovimiento()
+			})
+			game.schedule(200,{	
+				if(!recibioDanio){
+					self.permitirMovimiento()
+					image = "Alex/player"+vistaActual+".png"					
+				}			
+			})
 		}
+		self.darUnPaso()
 	}
 	
 	method actualizarVisualConDanio(){
@@ -131,6 +145,13 @@ object alex {
 	}
 	
 	method image() = image
+	method darUnPaso(){
+		if(pasoNro == 1){
+			pasoNro++
+		}else{
+			pasoNro--
+		}
+	}
 	
 	
 	// --- COLISION Y ACCIONES---
@@ -145,10 +166,10 @@ object alex {
 	method estadoInicial(){
 		position = game.center()
 		movimientoPermitido = true
-		image = "Alex/playerDer.png"
 		posicionAnterior = position
 		vistaActual = "Abajo"
 		vistaAnterior = "Abajo"
+		image = "Alex/player"+vistaActual+".png"
 		objetoEncima = null
 		vidas = 3
 	}
