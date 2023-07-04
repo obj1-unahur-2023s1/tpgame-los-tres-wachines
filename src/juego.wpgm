@@ -167,7 +167,6 @@ program juego{
 	keyboard.r().onPressDo({
 		if(estaEnCartelMuerte){
 			game.schedule(300,{
-				alex.estadoInicial()
 				habitacionActual = pasilloPrincipal
 				habitacionActual.estadoInicial()
 				habitaciones.forEach({h=>h.estadoInicial()})
@@ -177,10 +176,11 @@ program juego{
 				game.removeVisual(botonTerminar)
 				musicaDerrota.stop()
 				musicaFondo.resume()
-				codigoActualizarHUD.apply()
 				estaEnCartelMuerte = false
 				botonReiniciar.estadoInicial()
 				objetoInventario.estadoInicial()
+				alex.estadoInicial()
+				codigoActualizarHUD.apply()
 			})
 		}
 	})

@@ -103,15 +103,31 @@ object alex {
 		})
 		game.schedule(500, {
 			if(self.estaMuerto()){
-				image = "Alex/alexMuerto.png"
+				image = "Alex/alexMuerte"+self.vistaMuerte()+"0.png"
+				game.schedule(500,{
+					image = "Alex/alexMuerte"+self.vistaMuerte()+"1.png"
+				})
 			}else{			
-				self.actualizarVisual()
+				if(self.tieneLasManosOcupadas() and self.objeto_DeTipo_(objetoEncima,caja)){	
+					image = "Alex/player"+vistaActual+"Caja.png"
+				}else {
+					image = "Alex/player"+vistaActual+".png"
+				}
 			}
 		})
-		game.schedule(700, {
-			self.permitirMovimiento()
-			recibioDanio = false
+		game.schedule(900, {
+			if(!self.estaMuerto()){
+				self.permitirMovimiento()
+			}
+			recibioDanio = false				
 		})
+	}
+	method vistaMuerte() {
+		if( vistaActual == "Der" or vistaActual == "Abajo"){
+			return "Der"
+		}else{
+			return "Izq"
+		}
 	}
 	
 	method estaMuerto() = vidas == 0
@@ -128,8 +144,8 @@ object alex {
 			})
 			game.schedule(200,{	
 				if(!recibioDanio){
-					self.permitirMovimiento()
 					image = "Alex/player"+vistaActual+".png"					
+					self.permitirMovimiento()
 				}			
 			})
 		}
