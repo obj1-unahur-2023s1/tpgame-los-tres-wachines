@@ -7,36 +7,53 @@ object visualVida {
 }
 */
 
+object visualVida{
+	var image = "HUD/corazon3.png"
+	var tick = 0
+	
+	method position() = game.at(2,0)
+	method image() = image
+	method image(unaImagen) {image = unaImagen}
+	method esAtravesable()=true
+	method tipo() = hud
+	method esDeTipo(unTipo) = self.tipo() == unTipo
+	method animacionPerderVida(){
+		game.onTick(30, "animacion", {self.cambiarImagen()})
+	}
+	method cambiarImagen(){
+		if(tick<19){
+			image = "HUD/corazonR"+(tick%19)+".png"
+			tick++				
+		}
+	}
+	method removerAnimacionPerderVida(cantVidas){
+		game.removeTickEvent("animacion")
+		if(cantVidas > 0){
+			image = "HUD/corazon"+ cantVidas +".png"
+			tick = 0						
+		}
+	}
+	
+	method actualizarImagenCon(cantVidas){
+		image = "HUD/corazon"+ cantVidas +".png"
+		tick = 0
+	}
+	
+}
+
 object marco{
-	var cantVidas = 3
-	var image = "marco3.png"
+	const image = "HUD/marco.png"
 	const position = game.at(0,0)
 	method image() = image
 	method position() = position
 	method tipo() = hud
 	method esAtravesable()=true
 	method esDeTipo(unTipo) = self.tipo() == unTipo
-	method actualizarVidas(vidas){
-		if(vidas < cantVidas){
-			game.schedule(200,{
-				image = "marco0.png"
-			})
-			game.schedule(500,{			
-				image = "marco"+vidas+".png"
-			})
-			cantVidas--			
-		}else{
-			game.schedule(200,{
-				image = "marco"+vidas+".png"
-			})
-			cantVidas++
-		}
-	}
 }
 
 object objetoInventario{
-	var image = "vacio.png"
-	method position() = game.at(3,0)
+	var image = "Minijuegos/vacio.png"
+	method position() = game.at(1,0)
 	method image() = image
 	method image(unaImagen) {image = unaImagen}
 	method esAtravesable()=true

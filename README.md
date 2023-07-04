@@ -10,11 +10,11 @@
 
 ## Capturas
 
-![Captura 1](./assets/juegoInicio.png)
-![Captura 2](./assets/juegoPasillo.png)
-![Captura 3](./assets/juegoNivel.png)
-![Captura 4](./assets/juegoMuerte.png)
-![Captura 4](./assets/cartelJuegoCompletado.png)
+![Captura 1](./assets/Screenshots/juegoInicio.png)
+![Captura 2](./assets/Screenshots/juegoPasillo.png)
+![Captura 3](./assets/Screenshots/juegoNivel.png)
+![Captura 4](./assets/Screenshots/juegoMuerte.png)
+![Captura 4](./assets/Screenshots/cartelJuegoCompletado.png)
 
 ## Reglas de Juego / Instrucciones
 

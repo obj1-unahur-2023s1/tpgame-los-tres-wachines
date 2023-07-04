@@ -6,7 +6,7 @@ import hud.*
 object alex {
 	var property position = game.center()
 	var movimientoPermitido = true
-	var property image = "playerDer.png"
+	var property image = "Alex/playerDer.png"
 	var posicionAnterior = position
 	var property vistaActual = "Abajo"
 	var vistaAnterior = "Abajo"
@@ -100,7 +100,7 @@ object alex {
 		})
 		game.schedule(500, {
 			if(self.estaMuerto()){
-				image = "alexMuerto.png"
+				image = "Alex/alexMuerto.png"
 			}else{			
 				self.actualizarVisual()
 			}
@@ -116,17 +116,17 @@ object alex {
 	
 	method actualizarVisual(){
 		if(self.tieneLasManosOcupadas() and self.objeto_DeTipo_(objetoEncima,caja)){	
-			image = "player"+vistaActual+"Caja.png"
+			image = "Alex/player"+vistaActual+"Caja.png"
 		}else {
-			image = "player"+vistaActual+".png"
+			image = "Alex/player"+vistaActual+".png"
 		}
 	}
 	
 	method actualizarVisualConDanio(){
 		if(self.tieneLasManosOcupadas() and self.objeto_DeTipo_(objetoEncima,caja)){	
-			image = "player"+vistaActual+"DañoConCaja.png"
+			image = "Alex/player"+vistaActual+"DañoConCaja.png"
 		}else {
-			image = "player"+vistaActual+"Daño.png"
+			image = "Alex/player"+vistaActual+"Daño.png"
 		}
 	}
 	
@@ -145,7 +145,7 @@ object alex {
 	method estadoInicial(){
 		position = game.center()
 		movimientoPermitido = true
-		image = "playerDer.png"
+		image = "Alex/playerDer.png"
 		posicionAnterior = position
 		vistaActual = "Abajo"
 		vistaAnterior = "Abajo"

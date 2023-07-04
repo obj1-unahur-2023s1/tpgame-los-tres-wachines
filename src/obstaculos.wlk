@@ -33,21 +33,21 @@ class Pared inherits ObstaculoNoAtravesable{
 	override method estadoInicial(){}
 }
 
-class Trampa inherits ObstaculoAtravesable(image = "pincheCerrado.png"){
+class Trampa inherits ObstaculoAtravesable(image = "Minijuegos/pincheCerrado.png"){
 	override method tipo() = trampa
 	method activarTrampa(){
-		self.image("pincheAbierto.png")
+		self.image("Minijuegos/pincheAbierto.png")
 		game.schedule(500,{
 			self.estadoInicial()
 		})
 	}
 	override method estadoInicial(){
-		self.image("pincheCerrado.png")
+		self.image("Minijuegos/pincheCerrado.png")
 	}
 }
 
-class CajaMadera inherits ObstaculoAtravesable(image = "caja.png"){
-	override method image() = "caja.png"
+class CajaMadera inherits ObstaculoAtravesable(image = "Minijuegos/caja.png"){
+	override method image() = "Minijuegos/caja.png"
 	override method tipo() = caja
 	override method estadoInicial(){}
 }
@@ -115,7 +115,7 @@ class DecoNoAtravesable inherits ObstaculoNoAtravesable{
 	override method estadoInicial(){}
 }
 
-class Placa inherits ObstaculoAtravesable(image = "placaPresion.png"){
+class Placa inherits ObstaculoAtravesable(image = "Minijuegos/placaPresion.png"){
 	var estaActiva = false
 	method estaActiva() = estaActiva
 	method activar(){estaActiva = true}
@@ -126,54 +126,54 @@ class Placa inherits ObstaculoAtravesable(image = "placaPresion.png"){
 class PlacaPresion inherits Placa{
 	override method activar(){
 		super()
-		self.image("placaPresionActiva.png")
+		self.image("Minijuegos/placaPresionActiva.png")
 	}
 	override method estadoInicial(){
 		super()
-		self.image("placaPresion.png")
+		self.image("Minijuegos/placaPresion.png")
 	}
 }
 
 class PlacaRompeCabeza inherits Placa{
 	const forma
 	method initialize(){
-		self.image("placa"+forma+".png")		
+		self.image("Minijuegos/placa"+forma+".png")		
 	}
 	method forma() = forma
 	override method estadoInicial(){
 		super()
-		self.image("placa"+forma+".png")
+		self.image("Minijuegos/placa"+forma+".png")
 	}
 	override method activar(){
 		super()
-		self.image("placa"+forma+"Activa.png")
+		self.image("Minijuegos/placa"+forma+"Activa.png")
 	}
 }
 
 
-class Palanca inherits ObstaculoAtravesable(image = "palanca.png"){
+class Palanca inherits ObstaculoAtravesable(image = "Minijuegos/palanca.png"){
 	const id
 	var estaActiva = false
 	method id() = id
 	method estaActiva() = estaActiva
 	method activar(){
-		self.image("palancaActiva.png")
+		self.image("Minijuegos/palancaActiva.png")
 		estaActiva = true
 	}
 	override method estadoInicial(){
-		self.image("palanca.png")
+		self.image("Minijuegos/palanca.png")
 		estaActiva = false
 	}
 	override method tipo() = palanca
 }
 
-class LamparaNivel inherits ObstaculoNoAtravesable(image = "luzApagada.png"){
+class LamparaNivel inherits ObstaculoNoAtravesable(image = "Minijuegos/luzApagada.png"){
 	const id
 	method id() = id
-	method encender(){self.image("luzPrendida.png")}
+	method encender(){self.image("Minijuegos/luzPrendida.png")}
 	override method tipo() = lampara
 	override method estadoInicial(){
-		self.image("luzApagada.png")
+		self.image("Minijuegos/luzApagada.png")
 	}
 }
 
@@ -216,30 +216,30 @@ class PlacaSimon inherits ObstaculoAtravesable{
 }
 
 
-class BotonInicio inherits ObstaculoAtravesable(image = "iniciar.png", position = game.at(13,3)){
+class BotonInicio inherits ObstaculoAtravesable(image = "Carteles/iniciar.png", position = game.at(13,3)){
 	method activar(){
-		self.image("iniciarActivo.png")
+		self.image("Carteles/iniciarActivo.png")
 	}
 	override method estadoInicial(){
-		self.image("iniciar.png")
+		self.image("Carteles/iniciar.png")
 	}
 	override method tipo() = decoracion
 }
 
-class BotonReinicio inherits BotonInicio(image = "reiniciar.png", position = game.at(9,3)){
+class BotonReinicio inherits BotonInicio(image = "Carteles/reiniciar.png", position = game.at(9,3)){
 	override method activar(){
-		self.image("reiniciarActivo.png")
+		self.image("Carteles/reiniciarActivo.png")
 	}
 	override method estadoInicial(){
-		self.image("reiniciar.png")
+		self.image("Carteles/reiniciar.png")
 	}
 }
 
-class BotonTerminar inherits BotonInicio(image = "terminar.png", position = game.at(17,3)){
+class BotonTerminar inherits BotonInicio(image = "Carteles/terminar.png", position = game.at(17,3)){
 	override method activar(){
-		self.image("terminarActivo.png")
+		self.image("Carteles/terminarActivo.png")
 	}
 	override method estadoInicial(){
-		self.image("terminar.png")
+		self.image("Carteles/terminar.png")
 	}
 }

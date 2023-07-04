@@ -24,18 +24,32 @@ program juego{
 	const habitacion3 = new HabitacionDer(minijuego = new MinijuegoSimon(), id =2)
 	const habitacion2 = new HabitacionDer(minijuego = new MinijuegoBloquesFormas(), id =3)
 	const habitaciones = [habitacion0,habitacion1,habitacion2,habitacion3]
-	const cartelMuerte = new Cartel(image = "cartelMuerte.png")
-	const cartelInicio = new Cartel(image = "cartelInicio.png")
-	const cartelFinal = new Cartel(image = "cartelJuegoCompletado.png")
+	
+	const cartelIntro0 = new Cartel(image = "Carteles/cartelIntro0.png")
+	const cartelIntro1 = new Cartel(image = "Carteles/cartelIntro1.png")
+	const cartelIntro2 = new Cartel(image = "Carteles/cartelIntro2.png")
+	const cartelIntro3 = new Cartel(image = "Carteles/cartelIntro3.png")
+	const cartelIntro4 = new Cartel(image = "Carteles/cartelIntro4.png")
+	const cartelIntro5 = new Cartel(image = "Carteles/cartelIntro5.png")
+	const cartelesIntro = [cartelIntro0,cartelIntro1,cartelIntro2,cartelIntro3,cartelIntro4,cartelIntro5]
+	var indice = 0
+	var cartelActual
+	
+	const cartelMuerte = new Cartel(image = "Carteles/cartelMuerte.png")
+	const cartelInicio = new Cartel(image = "Carteles/cartelInicio.png")
+	const cartelFinal = new Cartel(image = "Carteles/cartelJuegoCompletado.png")
 	const botonReiniciar = new BotonReinicio() 
 	const botonIniciar = new BotonInicio() 
 	const botonTerminar = new BotonTerminar() 
-	const musicaInicio = new Sonido(sonido = "cancionInicio.mp3",volumen = 0.1)
+	
+	const musicaInicio = new Sonido(sonido = "cancionInicio.mp3",volumen = 0.2)
 	const musicaFondo = new Sonido(sonido = "cancionFondo.mp3",volumen = 0.04)
 	const musicaVictoria = new Sonido(sonido = "cancionVictoria.mp3",volumen = 0.1)
-	var musicaDerrota = new Sonido(sonido = "cancionDerrota.mp3",volumen = 0.1)
+	var musicaDerrota = new Sonido(sonido = "cancionDerrota.mp3",volumen = 0.3)
 	var sonidoNivelCompletado = new Sonido(sonido = "sonidoNivelCompletado.mp3",volumen = 0.5)
 	var sonidoDanio = new Sonido(sonido = "ouh.mp3",volumen = 1)	
+	var sonidoMochila = new Sonido(sonido = "sonidoMochila.mp3",volumen = 1)
+	var sonidoMochilaSoltar = new Sonido(sonido = "sonidoMochilaSoltar.mp3",volumen = 1)
 	
 	var habitacionActual = pasilloPrincipal
 	var posDeAlexEnPasillo
@@ -50,14 +64,15 @@ program juego{
 		sonidoNivelCompletado.play()
 		sonidoNivelCompletado = new Sonido(sonido = "sonidoNivelCompletado.mp3",volumen = 1)
 		alex.sumarUnaVida()
-		marco.actualizarVidas(alex.getVidas())
+		visualVida.actualizarImagenCon(alex.getVidas())
 	}
 	
 	const codigoAlexRecibeDanio = {
 		sonidoDanio.play()
 		sonidoDanio = new Sonido(sonido = "ouh.mp3",volumen = 1)
 		alex.recibirDanio()
-		marco.actualizarVidas(alex.getVidas())
+		visualVida.animacionPerderVida()
+		game.schedule(800,{visualVida.removerAnimacionPerderVida(alex.getVidas())})
 		if(alex.estaMuerto()){
 			game.schedule(2000, {
 				estaEnCartelMuerte = true
@@ -76,6 +91,9 @@ program juego{
 		game.addVisual(marco)
 		game.removeVisual(objetoInventario)
 		game.addVisual(objetoInventario)
+		game.removeVisual(visualVida)
+		visualVida.actualizarImagenCon(alex.getVidas())
+		game.addVisual(visualVida)
 	}
 	 
 	game.addVisual(alex)
@@ -90,15 +108,35 @@ program juego{
 			game.schedule(300,{
 				game.removeVisual(botonIniciar)
 				pasilloPrincipal.mostrarVisuales()
-				marco.actualizarVidas(alex.getVidas())
 				game.addVisual(marco)	
 				game.addVisual(objetoInventario)	
+				game.addVisual(visualVida)
 				game.removeVisual(cartelInicio)
 				alex.estadoInicial()
 				musicaInicio.stop()
 				musicaFondo.playLoop()
 				estaEnCartelInicio = false
 			})
+		}
+	})
+	
+	keyboard.right().onPressDo({
+		if(estaEnCartelInicio){
+			if(indice < 6){
+				cartelActual = cartelesIntro.get(indice)
+				game.addVisual(cartelActual)
+				indice = 6.min(indice +1)
+			}
+		}
+	})
+	
+	keyboard.left().onPressDo({
+		if(estaEnCartelInicio){
+			if(indice > 0){
+				cartelActual = cartelesIntro.get(indice)
+				game.addVisual(cartelActual)
+				indice = 0.max(indice -1)
+			}
 		}
 	})
 	
@@ -153,7 +191,6 @@ program juego{
 				musicaDerrota.stop()
 				musicaFondo.resume()
 				codigoActualizarHUD.apply()
-				marco.actualizarVidas(alex.getVidas())
 				estaEnCartelMuerte = false
 				botonReiniciar.estadoInicial()
 			})
@@ -191,6 +228,8 @@ program juego{
 					}else{
 						objetoManipulable = alex.objetoDeTipo_EnColision(bloqueForma)
 					}
+					sonidoMochila.play()
+					sonidoMochila = new Sonido(sonido = "sonidoMochila.mp3",volumen = 1)
 					objetoInventario.image(objetoManipulable.image())
 					alex.agarrarObjeto(objetoManipulable) 
 					habitacionActual.minijuego().removerElemento(objetoManipulable)
@@ -198,8 +237,10 @@ program juego{
 					alex.actualizarVisual()
 				}else if(alex.tieneLasManosOcupadas() and !alex.hayColisionConObjetoTipo_oTipo_(caja,bloqueForma)){
 					const objetoManipulable = alex.objetoEnManos() 
+					sonidoMochilaSoltar.play()
+					sonidoMochilaSoltar = new Sonido(sonido = "sonidoMochilaSoltar.mp3",volumen = 1)
 					alex.soltarObjeto()
-					objetoInventario.image("vacio.png")
+					objetoInventario.image("Minijuegos/vacio.png")
 					habitacionActual.minijuego().agregarVisual(objetoManipulable)
 					objetoManipulable.position(alex.position())
 					game.removeVisual(alex)
@@ -244,7 +285,6 @@ program juego{
 			codigoMinijuegoCompletado.apply()
 		}
 	})
-
 	
 	game.start()
 }

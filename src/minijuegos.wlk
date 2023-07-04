@@ -2,6 +2,7 @@ import wollok.game.*
 import obstaculos.*
 import tipos.*
 import jugador.*
+import sonidos.*
 
 class Minijuego{
 	var puntos = 0
@@ -100,7 +101,7 @@ class MinijuegoCajasPlacas inherits Minijuego{
 			posPosiblesY.remove(posYTrampa)
 			visualesMinijuego.add(new Trampa(position = game.at(posXTrampa,posYTrampa)))
 		})
-		visualesMinijuego.add(new DecoAtravesable(image = "cartelCajaPlaca.png",position = game.at(14,17)))
+		visualesMinijuego.add(new DecoAtravesable(image = "Minijuegos/cartelCajaPlaca.png",position = game.at(14,17)))
 	}
 	
 	method recibirAccion(unaPlaca){
@@ -136,7 +137,7 @@ class MinijuegoPalancas inherits Minijuego{
 				listaIdPalancas.remove(numComb)
 				listaCombinacion.add(numComb)
 				visualesMinijuego.add(new Palanca(position = game.at(6+n*2,9), id = n)) 
-				visualesMinijuego.add(new DecoAtravesable(image = "numero"+numComb+".png",position = game.at(6+n*2,17)))
+				visualesMinijuego.add(new DecoAtravesable(image = "Minijuegos/numero"+numComb+".png",position = game.at(6+n*2,17)))
 		})
 	}
 	method recibirAccion(unaPalanca){
@@ -192,10 +193,10 @@ class MinijuegoBloquesFormas inherits Minijuego{
 		posPosiblesX.clear()
 		posPosiblesY.clear()
 		visualesMinijuego.clear()
-		posPosiblesX.addAll((3..11).asList())
-		posPosiblesX.addAll((15..24).asList())
-		posPosiblesY.addAll((1..6).asList())
-		posPosiblesY.addAll((10..16).asList())
+		posPosiblesX.addAll((3..12).asList())
+		posPosiblesX.addAll((16..24).asList())
+		posPosiblesY.addAll((1..7).asList())
+		posPosiblesY.addAll((11..16).asList())
 		formas.clear()
 		formas.addAll(["Circulo","Cuadrado","Estrella","Luna","Corazon","Diamante","Manzana","Rombo","Triangulo"])
 		self.agregarPrimerosVisuales()
@@ -223,9 +224,9 @@ class MinijuegoBloquesFormas inherits Minijuego{
 			posPosiblesX.remove(posX)
 			const posY = posPosiblesY.get((0.randomUpTo(posPosiblesY.size()-1)).truncate(0))
 			posPosiblesY.remove(posY)
-			visualesMinijuego.add(new BloqueForma(position = game.at(posX,posY), forma = unaForma, image = "forma"+unaForma+".png"))
+			visualesMinijuego.add(new BloqueForma(position = game.at(posX,posY), forma = unaForma, image = "Minijuegos/forma"+unaForma+".png"))
 		})
-		visualesMinijuego.add(new DecoAtravesable(image = "cartelFormas.png",position = game.at(14,17)))
+		visualesMinijuego.add(new DecoAtravesable(image = "Minijuegos/cartelFormas.png",position = game.at(14,17)))
 	}
 	
 	method recibirAccion(unaPlaca){
@@ -251,6 +252,7 @@ class MinijuegoSimon inherits Minijuego{
 	var jugada = 0
 	var jugadasPrevistas = 0
 	var pos = 0
+	//var sonidoTele = new Sonido(sonido = "sonidoEstaticaTele.mp3",volumen = 0.02)
 	
 	method initialize(){
 		self.estadoInicial()
@@ -275,13 +277,13 @@ class MinijuegoSimon inherits Minijuego{
 	}
 	
 	method agregarPrimerosVisuales(){
-		visualesMinijuego.add(new PlacaSimon(id = "Rojo", image = "placaSimonRojo.png", position = game.at(15,9)))
-		visualesMinijuego.add(new PlacaSimon(id = "Verde", image = "placaSimonVerde.png", position = game.at(15,10)))
-		visualesMinijuego.add(new PlacaSimon(id = "Azul", image = "placaSimonAzul.png", position = game.at(14,9)))
-		visualesMinijuego.add(new PlacaSimon(id = "Amarillo", image = "placaSimonAmarillo.png", position = game.at(14,10)))
-		visualesMinijuego.add(new DecoNoAtravesable(image = "teleSimon.png", position = game.at(15,13)))
+		visualesMinijuego.add(new PlacaSimon(id = "Rojo", image = "Minijuegos/placaSimonRojo.png", position = game.at(15,9)))
+		visualesMinijuego.add(new PlacaSimon(id = "Verde", image = "Minijuegos/placaSimonVerde.png", position = game.at(15,10)))
+		visualesMinijuego.add(new PlacaSimon(id = "Azul", image = "Minijuegos/placaSimonAzul.png", position = game.at(14,9)))
+		visualesMinijuego.add(new PlacaSimon(id = "Amarillo", image = "Minijuegos/placaSimonAmarillo.png", position = game.at(14,10)))
+		visualesMinijuego.add(new DecoNoAtravesable(image = "Minijuegos/teleSimon.png", position = game.at(15,13)))
 		visualesMinijuego.add(new Palanca(id = 1, position = game.at(14,13)))
-		visualesMinijuego.add(new DecoAtravesable(image = "cartelSimon.png",position = game.at(14,17)))
+		visualesMinijuego.add(new DecoAtravesable(image = "Minijuegos/cartelSimon.png",position = game.at(14,17)))
 	}
 	
 	method verificarPosicionColor(unaPos) {
@@ -299,11 +301,14 @@ class MinijuegoSimon inherits Minijuego{
 		const tele = visualesMinijuego.find({v=>v.tipo()==decoracion})
 		(1..jugadasPrevistas+1).forEach({n=>
 			game.schedule(tiempoFijo,{
-				tele.image("teleSimon"+listaCombinacion.get(n-1)+".png")
+				tele.image("Minijuegos/teleSimon"+listaCombinacion.get(n-1)+".png")
 			})
 			game.schedule(tiempoFijo+500,{
-				tele.image("teleSimonColores.png")
+				//sonidoTele.play()
+				//sonidoTele = new Sonido(sonido = "sonidoEstaticaTele.mp3",volumen = 0.02)
+				tele.image("Minijuegos/teleSimonColores.png")
 			})
+			//sonidoTele.stop()
 			tiempoFijo+=1000
 		})
 	}
@@ -322,7 +327,7 @@ class MinijuegoSimon inherits Minijuego{
 					listaCombinacion.add(listaCombinacionInicial.get(jugadasPrevistas))
 					jugadasPrevistas++	
 					if(self.minijuegoCompletado()){
-						visualesMinijuego.find({v=>v.tipo()==decoracion}).image("teleSimon.png")
+						visualesMinijuego.find({v=>v.tipo()==decoracion}).image("Minijuegos/teleSimon.png")
 					}else{						
 						self.mostrarCombinacion()
 					}
