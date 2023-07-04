@@ -56,6 +56,7 @@ class CajaMadera inherits ObstaculoAtravesable(image = "Minijuegos/caja.png"){
 class Puerta inherits ObstaculoHibrido(image = "puertaCostadoDer.png"){
 	const id
 	var estaBloqueada = false
+	method estaBloqueada()=estaBloqueada
 	method id() = id
 	override method tipo() = puerta
 	method bloquearPuerta(){
@@ -213,5 +214,11 @@ class PlacaSimon inherits ObstaculoAtravesable{
 	method id() = id
 	override method estadoInicial(){}
 	override method tipo() = placaSimon
+	method activar(){
+		self.image("Minijuegos/placaSimon"+id+"Activada.png")
+		game.schedule(200,{
+			self.image("Minijuegos/placaSimon"+id+".png")
+		})
+	}
 }
 

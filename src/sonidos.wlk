@@ -23,6 +23,7 @@ class Sonido{
 	method resume(){
 		musica.resume()
 	}
+	method played() = self.played()
 }
 
 

@@ -252,7 +252,7 @@ class MinijuegoSimon inherits Minijuego{
 	var jugada = 0
 	var jugadasPrevistas = 0
 	var pos = 0
-	//var sonidoTele = new Sonido(sonido = "sonidoEstaticaTele.mp3",volumen = 0.02)
+	var sonidoTele = new Sonido(sonido = "sonidoEstaticaTele.mp3",volumen = 0.02)
 	
 	method initialize(){
 		self.estadoInicial()
@@ -308,7 +308,9 @@ class MinijuegoSimon inherits Minijuego{
 				//sonidoTele = new Sonido(sonido = "sonidoEstaticaTele.mp3",volumen = 0.02)
 				tele.image("Minijuegos/teleSimonColores.png")
 			})
-			//sonidoTele.stop()
+			//if(sonidoTele.played()){
+				//sonidoTele.stop()				
+			//}
 			tiempoFijo+=1000
 		})
 	}

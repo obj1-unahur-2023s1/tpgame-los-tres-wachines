@@ -43,6 +43,8 @@ program juego{
 	var sonidoDanio = new Sonido(sonido = "ouh.mp3",volumen = 1)	
 	var sonidoMochila = new Sonido(sonido = "sonidoMochila.mp3",volumen = 1)
 	var sonidoMochilaSoltar = new Sonido(sonido = "sonidoMochilaSoltar.mp3",volumen = 1)
+	var sonidoActivacion = new Sonido(sonido = "sonidoActivacion.mp3",volumen = 0.5)
+	var sonidoPuerta = new Sonido(sonido = "sonidoPuerta.mp3",volumen = 0.5)
 	
 	var habitacionActual = pasilloPrincipal
 	var posDeAlexEnPasillo
@@ -206,6 +208,10 @@ program juego{
 				var puertaAdelante = alex.obtenerObjetosAdelante().find({o => o.esDeTipo(puerta)})
 				if(!puertaAdelante.esAtravesable()){				
 					puertaAdelante.abrirPuerta()
+					if(!puertaAdelante.estaBloqueada()){
+						sonidoPuerta.play()
+						sonidoPuerta = new Sonido(sonido = "sonidoPuerta.mp3",volumen = 0.5)
+					}
 				}
 				//---caja---
 			}else{
@@ -248,6 +254,8 @@ program juego{
 					const palancaActual = alex.objetoDeTipo_EnColision(palanca)
 					if(!palancaActual.estaActiva()){						
 						palancaActual.activar()
+						sonidoActivacion.play()
+						sonidoActivacion = new Sonido(sonido = "sonidoActivacion.mp3",volumen = 0.5)
 						habitacionActual.minijuego().recibirAccion(palancaActual)
 					}
 					if(habitacionActual.minijuego().estaEnEstadoCritico()){
@@ -265,9 +273,12 @@ program juego{
 		if(!estaEnCartelMuerte and alex.movimientoPermitido() and alex.hayColisionConObjetoTipo_(placaSimon)){
 			var unaPlacaSimon = alex.objetoDeTipo_EnColision(placaSimon)
 			habitacionActual.minijuego().recibirAccion(unaPlacaSimon)
+			unaPlacaSimon.activar()
+			sonidoActivacion.play()
+			sonidoActivacion = new Sonido(sonido = "sonidoActivacion.mp3",volumen = 0.5)
 			if(habitacionActual.minijuego().estaEnEstadoCritico()){
 						codigoAlexRecibeDanio.apply()
-					}
+			}
 		}
 		if(habitacionActual.minijuego().minijuegoCompletado() and habitacionActual.minijuego().minijuegoEstaActivo()){
 			codigoMinijuegoCompletado.apply()
