@@ -138,16 +138,18 @@ object alex {
 		if(self.tieneLasManosOcupadas() and self.objeto_DeTipo_(objetoEncima,caja)){	
 			image = "Alex/player"+vistaActual+"Caja.png"
 		}else {
-			image = "Alex/player"+vistaActual+pasoNro+".png"
-			game.schedule(50,{
-				self.bloquearMovimiento()
-			})
-			game.schedule(200,{	
-				if(!recibioDanio){
-					image = "Alex/player"+vistaActual+".png"					
-					self.permitirMovimiento()
-				}			
-			})
+			if(vistaAnterior != vistaActual){  //Cambie aca para que no de pasos en el mismo lugar al girar, asi tamb se puede bailar bien facherito
+				image = "Alex/player"+vistaActual+".png"
+			} else {	
+				image = "Alex/player"+vistaActual+pasoNro+".png"
+				game.schedule(35,{self.bloquearMovimiento()})
+				game.schedule(200,{	
+					if(!recibioDanio){
+						image = "Alex/player"+vistaActual+".png"					
+						self.permitirMovimiento()
+					}			
+				})
+			}
 		}
 		self.darUnPaso()
 	}

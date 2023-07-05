@@ -1,11 +1,5 @@
 import wollok.game.*
 import tipos.*
-/*
-object visualVida {
-	var property image = "corazon.png"
-	var property position = game.at(0,game.height()-1)
-}
-*/
 
 object visualVida{
 	var image = "HUD/corazon3.png"
@@ -17,28 +11,14 @@ object visualVida{
 	method esAtravesable()=true
 	method tipo() = hud
 	method esDeTipo(unTipo) = self.tipo() == unTipo
-	method animacionPerderVida(){
-		game.onTick(30, "animacion", {self.cambiarImagen()})
+	method animacionVidaDe(ganarOPerder){
+		game.onTick(30, "animacionVida", {self.secuenciaDeImagenesDe(ganarOPerder)})
 	}
-	method cambiarImagen(){
-		if(tick<19){
-			image = "HUD/corazonR"+(tick%19)+".png"
-			tick++				
-		}
+	method removerAnimacionVida(){game.removeTickEvent("animacionVida"); tick = 0}
+	method secuenciaDeImagenesDe(ganarOPerder){
+		if(tick<19) image = "HUD/corazon"+ganarOPerder+(tick%19)+".png"; tick++ 
 	}
-	method removerAnimacionPerderVida(cantVidas){
-		game.removeTickEvent("animacion")
-		if(cantVidas > 0){
-			image = "HUD/corazon"+ cantVidas +".png"
-			tick = 0						
-		}
-	}
-	
-	method actualizarImagenCon(cantVidas){
-		image = "HUD/corazon"+ cantVidas +".png"
-		tick = 0
-	}
-	
+	method actualizarImagenCon(cantVidas){ if(cantVidas > 0) image = "HUD/corazon"+ cantVidas +".png" }
 }
 
 object marco{

@@ -1,7 +1,0 @@
-ANOTACIONES PARA IMPLEMENTAR, MODIFICAR O ARREGLAR
-- escribir el codigo dentro de las clases creadas en obstaculos.
-- rediseñar niveles para poder salir del nivel SOLO al agarrar el fragmento --> que las puertas esten bloqueadas hasta terminar el nivel. 
-- implementar que las cajas no se puedan poner en el mismo lugar, ni salir de la habitacion con cajas.
-- implementar los niveles faltantes (1-falta, 2-falta, 3-falta, 4-falta, 5-falta, 6-falta).
-- pensar bien el ultimo nivel.
-- implementar puerta final y fragmentos.

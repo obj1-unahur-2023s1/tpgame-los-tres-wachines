@@ -44,6 +44,27 @@ class Minijuego{
 	method estadoInicial()
 }
 
+class MinijuegoPasillo inherits Minijuego{
+	const lamparas = []
+	var cantLamparasPrendidas = 0
+	method initialize(){
+		(1..2).forEach({ n =>
+			lamparas.add(new LamparaNivel(position = game.at(11+n,17),id = n-1))
+			lamparas.add(new LamparaNivel(position = game.at(14+n,17),id = n+1))
+		})
+		visualesMinijuego.addAll(lamparas)
+	}
+	override method minijuegoCompletado() = cantLamparasPrendidas == 4
+	override method estadoInicial(){
+		cantLamparasPrendidas = 0
+		lamparas.forEach({l=>l.estadoInicial()})
+	}
+	method nivel_Completado(idNivel){
+		lamparas.find({l=>l.id() == idNivel}).encender()
+		cantLamparasPrendidas++
+	}
+}
+
 class MinijuegoCajasPlacas inherits Minijuego{
 	const posPosiblesX = []
 	const posPosiblesY = []
@@ -70,13 +91,13 @@ class MinijuegoCajasPlacas inherits Minijuego{
 			const posParesY = posPosiblesY.filter({p=>p.even()})
 			const posImparesX = posPosiblesX.filter({p=>p.odd()})
 			const posImparesY = posPosiblesY.filter({p=>p.odd()})
-			const posXCaja = posParesX.get((0.randomUpTo(posParesX.size()-1)).truncate(0))
+			const posXCaja = posParesX.anyOne()  //posParesX.get((0.randomUpTo(posParesX.size()-1)).truncate(0))
 			posPosiblesX.remove(posXCaja)
-			const posYCaja = posParesY.get((0.randomUpTo(posParesY.size()-1)).truncate(0))
+			const posYCaja = posParesY.anyOne() //posParesY.get((0.randomUpTo(posParesY.size()-1)).truncate(0))
 			posPosiblesY.remove(posYCaja)
-			const posXPlaca = posImparesX.get((0.randomUpTo(posImparesX.size()-1)).truncate(0))
+			const posXPlaca = posImparesX.anyOne() //posImparesX.get((0.randomUpTo(posImparesX.size()-1)).truncate(0))
 			posPosiblesX.remove(posXPlaca)
-			const posYPlaca = posImparesY.get((0.randomUpTo(posImparesY.size()-1)).truncate(0))
+			const posYPlaca = posImparesY.anyOne() //posImparesY.get((0.randomUpTo(posImparesY.size()-1)).truncate(0))
 			posPosiblesY.remove(posYPlaca)
 			visualesMinijuego.add(new CajaMadera(position = game.at(posXCaja,posYCaja))) 
 			visualesMinijuego.add(new PlacaPresion(position = game.at(posXPlaca,posYPlaca)))
@@ -90,14 +111,14 @@ class MinijuegoCajasPlacas inherits Minijuego{
 			const posParesY = posPosiblesY.filter({p=>p.even()})
 			const posImparesX = posPosiblesX.filter({p=>p.odd()})
 			const posImparesY = posPosiblesY.filter({p=>p.odd()})
-			var posXTrampa = posImparesX.get((0.randomUpTo(posImparesX.size()-1)).truncate(0))
+			var posXTrampa = posImparesX.anyOne() //posImparesX.get((0.randomUpTo(posImparesX.size()-1)).truncate(0))
 			posPosiblesX.remove(posXTrampa)
-			var posYTrampa = posParesY.get((0.randomUpTo(posParesY.size()-1)).truncate(0))
+			var posYTrampa = posParesY.anyOne() //
 			posPosiblesY.remove(posYTrampa)
 			visualesMinijuego.add(new Trampa(position = game.at(posXTrampa,posYTrampa)))
-			posXTrampa = posParesX.get((0.randomUpTo(posParesX.size()-1)).truncate(0))
+			posXTrampa = posParesX.anyOne() //posParesX.get((0.randomUpTo(posParesX.size()-1)).truncate(0))
 			posPosiblesX.remove(posXTrampa)
-			posYTrampa = posImparesY.get((0.randomUpTo(posImparesY.size()-1)).truncate(0))
+			posYTrampa = posImparesY.anyOne() //posImparesY.get((0.randomUpTo(posImparesY.size()-1)).truncate(0))
 			posPosiblesY.remove(posYTrampa)
 			visualesMinijuego.add(new Trampa(position = game.at(posXTrampa,posYTrampa)))
 		})
@@ -108,7 +129,7 @@ class MinijuegoCajasPlacas inherits Minijuego{
 		self.sumarUnPunto()
 	}
 	
-	override method minijuegoCompletado() = puntos == 8
+	override method minijuegoCompletado() = puntos == 1 // 8
 }
 
 
@@ -133,7 +154,7 @@ class MinijuegoPalancas inherits Minijuego{
 	
 	method agregarPrimerosVisuales(){
 		(1..6).forEach({n=>
-				const numComb = listaIdPalancas.get((0.randomUpTo(listaIdPalancas.size()-1)).truncate(0))
+				const numComb = listaIdPalancas.anyOne()  //listaIdPalancas.get((0.randomUpTo(listaIdPalancas.size()-1)).truncate(0))
 				listaIdPalancas.remove(numComb)
 				listaCombinacion.add(numComb)
 				visualesMinijuego.add(new Palanca(position = game.at(6+n*2,9), id = n)) 
@@ -153,30 +174,8 @@ class MinijuegoPalancas inherits Minijuego{
 		}
 	}
 	
-	override method minijuegoCompletado() = puntos == 6 and combinacionIngresada == listaCombinacion
+	override method minijuegoCompletado() = puntos == 1// 6 and combinacionIngresada == listaCombinacion
 }
-
-class MinijuegoPasillo inherits Minijuego{
-	const lamparas = []
-	var cantLamparasPrendidas = 0
-	method initialize(){
-		(1..2).forEach({ n =>
-			lamparas.add(new LamparaNivel(position = game.at(11+n,17),id = n-1))
-			lamparas.add(new LamparaNivel(position = game.at(14+n,17),id = n+1))
-		})
-		visualesMinijuego.addAll(lamparas)
-	}
-	override method minijuegoCompletado() = cantLamparasPrendidas == 4
-	override method estadoInicial(){
-		cantLamparasPrendidas = 0
-		lamparas.forEach({l=>l.estadoInicial()})
-	}
-	method nivel_Completado(idNivel){
-		lamparas.find({l=>l.id() == idNivel}).encender()
-		cantLamparasPrendidas++
-	}
-}
-
 
 class MinijuegoBloquesFormas inherits Minijuego{
 	const posPosiblesX = []
@@ -205,24 +204,24 @@ class MinijuegoBloquesFormas inherits Minijuego{
 	
 	method agregarPrimerosVisuales(){
 		(1..3).forEach({n=>
-			var unaForma = formas.get(0.randomUpTo(formas.size()-1).truncate(0))
+			var unaForma = formas.anyOne() //formas.get(0.randomUpTo(formas.size()-1).truncate(0))
 			formas.remove(unaForma)
 			visualesMinijuego.add(new PlacaRompeCabeza(position = game.at(n+12,8), forma = unaForma))
-			unaForma = formas.get(0.randomUpTo(formas.size()-1).truncate(0))
+			unaForma = formas.anyOne() //formas.get(0.randomUpTo(formas.size()-1).truncate(0))
 			formas.remove(unaForma)
 			visualesMinijuego.add(new PlacaRompeCabeza(position = game.at(n+12,9), forma = unaForma))
-			unaForma = formas.get(0.randomUpTo(formas.size()-1).truncate(0))
+			unaForma = formas.anyOne() //formas.get(0.randomUpTo(formas.size()-1).truncate(0))
 			formas.remove(unaForma)
 			visualesMinijuego.add(new PlacaRompeCabeza(position = game.at(n+12,10), forma = unaForma))
 		})
 		formas.clear()
 		formas.addAll(["Circulo","Cuadrado","Estrella","Luna","Corazon","Diamante","Manzana","Rombo","Triangulo"])
 		(1..9).forEach({n2=>
-			const unaForma = formas.get(0.randomUpTo(formas.size()-1).truncate(0))
+			const unaForma = formas.anyOne() //formas.get(0.randomUpTo(formas.size()-1).truncate(0))
 			formas.remove(unaForma)
-			const posX = posPosiblesX.get((0.randomUpTo(posPosiblesX.size()-1)).truncate(0))
+			const posX = posPosiblesX.anyOne() //posPosiblesX.get((0.randomUpTo(posPosiblesX.size()-1)).truncate(0))
 			posPosiblesX.remove(posX)
-			const posY = posPosiblesY.get((0.randomUpTo(posPosiblesY.size()-1)).truncate(0))
+			const posY = posPosiblesY.anyOne() //posPosiblesY.get((0.randomUpTo(posPosiblesY.size()-1)).truncate(0))
 			posPosiblesY.remove(posY)
 			visualesMinijuego.add(new BloqueForma(position = game.at(posX,posY), forma = unaForma, image = "Minijuegos/forma"+unaForma+".png"))
 		})
@@ -241,18 +240,18 @@ class MinijuegoBloquesFormas inherits Minijuego{
 		}
 	}
 	
-	override method minijuegoCompletado() = puntos == 9
+	override method minijuegoCompletado() = puntos == 1//9
 }
 
 class MinijuegoSimon inherits Minijuego{
 	const listaCombinacionInicial = []
 	const listaCombinacion = []
 	const combinacionIngresada = []
-	const listaColores = ["Rojo","Azul","Amarillo","Verde","Azul","Verde","Rojo","Amarillo","Rojo"]
+	const listaColores = ["Rojo","Azul","Amarillo","Verde"] //["Rojo","Azul","Amarillo","Verde","Azul","Verde","Rojo","Amarillo","Rojo"]
 	var jugada = 0
 	var jugadasPrevistas = 0
 	var pos = 0
-	var sonidoTele = new Sonido(sonido = "sonidoEstaticaTele.mp3",volumen = 0.02)
+	//var sonidoTele = new Sonido(sonido = "Audio/sonidoEstaticaTele.mp3",volumen = 0.02)
 	
 	method initialize(){
 		self.estadoInicial()
@@ -271,8 +270,8 @@ class MinijuegoSimon inherits Minijuego{
 		listaCombinacionInicial.clear()
 		self.agregarPrimerosVisuales()
 		(1..6).forEach({n=>
-			listaCombinacionInicial.add(listaColores.get((0.randomUpTo(listaColores.size()-1)).truncate(0)))
-		})
+			listaCombinacionInicial.add(listaColores.anyOne())
+		})//listaCombinacionInicial.add(listaColores.get((0.randomUpTo(listaColores.size()-1)).truncate(0)))
 		listaCombinacion.add(listaCombinacionInicial.get(0))
 	}
 	
@@ -305,7 +304,7 @@ class MinijuegoSimon inherits Minijuego{
 			})
 			game.schedule(tiempoFijo+500,{
 				//sonidoTele.play()
-				//sonidoTele = new Sonido(sonido = "sonidoEstaticaTele.mp3",volumen = 0.02)
+				//sonidoTele = new Sonido(sonido = "Audio/sonidoEstaticaTele.mp3",volumen = 0.02)
 				tele.image("Minijuegos/teleSimonColores.png")
 			})
 			//if(sonidoTele.played()){
@@ -348,7 +347,7 @@ class MinijuegoSimon inherits Minijuego{
 	}
 	
 
-	override method minijuegoCompletado() = puntos == 6
+	override method minijuegoCompletado() = puntos == 1//6
 }
 
 

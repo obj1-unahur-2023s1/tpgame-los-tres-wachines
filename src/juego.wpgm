@@ -30,21 +30,21 @@ program juego{
 	const cartelInicio = new CartelInicio(image = "Carteles/cartelIntro0.png")
 	const cartelFinal = new Cartel(image = "Carteles/cartelJuegoCompletado.png")
 	const botonReiniciar = new DecoAtravesable(image = "Carteles/btnReiniciar.png", position = game.at(10,3)) 
-	const botonIniciar = new DecoAtravesable(image = "Carteles/btnIniciar.png", position = game.at(14,3)) 
+	const botonIniciar = new DecoAtravesable(image = "Carteles/btnIniciar.png", position = game.at(13,3)) 
 	const botonTerminar = new DecoAtravesable(image = "Carteles/btnTerminar.png", position = game.at(17,3)) 
 	const botonSig = new DecoAtravesable(image = "Carteles/btnSig.png", position = game.at(17,3)) 
-	const botonAnt = new DecoAtravesable(image = "Carteles/btnAnt.png", position = game.at(10,3)) 
+	const botonAnt = new DecoAtravesable(image = "Carteles/btnAnt.png", position = game.at(9,3)) 
 	
-	const musicaInicio = new Sonido(sonido = "cancionInicio.mp3",volumen = 0.2)
-	const musicaFondo = new Sonido(sonido = "cancionFondo.mp3",volumen = 0.04)
-	const musicaVictoria = new Sonido(sonido = "cancionVictoria.mp3",volumen = 0.1)
-	var musicaDerrota = new Sonido(sonido = "cancionDerrota.mp3",volumen = 0.3)
-	var sonidoNivelCompletado = new Sonido(sonido = "sonidoNivelCompletado.mp3",volumen = 0.5)
-	var sonidoDanio = new Sonido(sonido = "ouh.mp3",volumen = 1)	
-	var sonidoMochila = new Sonido(sonido = "sonidoMochila.mp3",volumen = 1)
-	var sonidoMochilaSoltar = new Sonido(sonido = "sonidoMochilaSoltar.mp3",volumen = 1)
-	var sonidoActivacion = new Sonido(sonido = "sonidoActivacion.mp3",volumen = 0.5)
-	var sonidoPuerta = new Sonido(sonido = "sonidoPuerta.mp3",volumen = 0.5)
+	const musicaInicio = new Sonido(sonido = "Audio/cancionInicio.mp3",volumen = 0.2)
+	const musicaFondo = new Sonido(sonido = "Audio/cancionFondo.mp3",volumen = 0.04)
+	const musicaVictoria = new Sonido(sonido = "Audio/cancionVictoria.mp3",volumen = 0.1)
+	var musicaDerrota = new Sonido(sonido = "Audio/cancionDerrota.mp3",volumen = 0.3)
+	var sonidoNivelCompletado = new Sonido(sonido = "Audio/sonidoNivelCompletado.mp3",volumen = 0.5)
+	var sonidoDanio = new Sonido(sonido = "Audio/ouh.mp3",volumen = 1)	
+	var sonidoMochila = new Sonido(sonido = "Audio/sonidoMochila.mp3",volumen = 1)
+	var sonidoMochilaSoltar = new Sonido(sonido = "Audio/sonidoMochilaSoltar.mp3",volumen = 1)
+	var sonidoActivacion = new Sonido(sonido = "Audio/sonidoActivacion.mp3",volumen = 0.5)
+	var sonidoPuerta = new Sonido(sonido = "Audio/sonidoPuerta.mp3",volumen = 0.5)
 	
 	var habitacionActual = pasilloPrincipal
 	var posDeAlexEnPasillo
@@ -57,17 +57,19 @@ program juego{
 		pasilloPrincipal.minijuego().nivel_Completado(habitacionActual.id())
 		pasilloPrincipal.actualizarEstado()
 		sonidoNivelCompletado.play()
-		sonidoNivelCompletado = new Sonido(sonido = "sonidoNivelCompletado.mp3",volumen = 1)
+		sonidoNivelCompletado = new Sonido(sonido = "Audio/sonidoNivelCompletado.mp3",volumen = 0.5)
 		alex.sumarUnaVida()
-		visualVida.actualizarImagenCon(alex.getVidas())
+		visualVida.animacionVidaDe("Ganar") //Poner una condicion aca para que no haga la animacion con 3 vidas?
+		game.schedule(800,{visualVida.removerAnimacionVida(); visualVida.actualizarImagenCon(alex.getVidas())})
+		
 	}
 	
 	const codigoAlexRecibeDanio = {
 		sonidoDanio.play()
-		sonidoDanio = new Sonido(sonido = "ouh.mp3",volumen = 1)
+		sonidoDanio = new Sonido(sonido = "Audio/ouh.mp3",volumen = 1)
 		alex.recibirDanio()
-		visualVida.animacionPerderVida()
-		game.schedule(800,{visualVida.removerAnimacionPerderVida(alex.getVidas())})
+		visualVida.animacionVidaDe("Perder")
+		game.schedule(800,{visualVida.removerAnimacionVida(); visualVida.actualizarImagenCon(alex.getVidas())})
 		if(alex.estaMuerto()){
 			game.schedule(2000, {
 				estaEnCartelMuerte = true
@@ -76,7 +78,7 @@ program juego{
 				game.addVisual(botonReiniciar)
 				game.addVisual(botonTerminar)
 				musicaFondo.pause()
-				musicaDerrota = new Sonido(sonido = "cancionDerrota.mp3",volumen = 0.1)
+				musicaDerrota = new Sonido(sonido = "Audio/cancionDerrota.mp3",volumen = 0.1)
 				musicaDerrota.playLoop()
 			})
 		}
@@ -189,7 +191,7 @@ program juego{
 	
 	keyboard.t().onPressDo({
 		if(estaEnCartelMuerte){
-			botonTerminar.activar()
+			//botonTerminar.activar() //Esto es para algo? tira error al tocar
 			game.schedule(200,{
 				game.stop()				
 			})
@@ -210,7 +212,7 @@ program juego{
 					puertaAdelante.abrirPuerta()
 					if(!puertaAdelante.estaBloqueada()){
 						sonidoPuerta.play()
-						sonidoPuerta = new Sonido(sonido = "sonidoPuerta.mp3",volumen = 0.5)
+						sonidoPuerta = new Sonido(sonido = "Audio/sonidoPuerta.mp3",volumen = 0.5)
 					}
 				}
 				//---caja---
@@ -223,7 +225,7 @@ program juego{
 						objetoManipulable = alex.objetoDeTipo_EnColision(bloqueForma)
 					}
 					sonidoMochila.play()
-					sonidoMochila = new Sonido(sonido = "sonidoMochila.mp3",volumen = 1)
+					sonidoMochila = new Sonido(sonido = "Audio/sonidoMochila.mp3",volumen = 1)
 					objetoInventario.image(objetoManipulable.image())
 					alex.agarrarObjeto(objetoManipulable) 
 					habitacionActual.minijuego().removerElemento(objetoManipulable)
@@ -232,7 +234,7 @@ program juego{
 				}else if(alex.tieneLasManosOcupadas() and !alex.hayColisionConObjetoTipo_oTipo_(caja,bloqueForma)){
 					const objetoManipulable = alex.objetoEnManos() 
 					sonidoMochilaSoltar.play()
-					sonidoMochilaSoltar = new Sonido(sonido = "sonidoMochilaSoltar.mp3",volumen = 1)
+					sonidoMochilaSoltar = new Sonido(sonido = "Audio/sonidoMochilaSoltar.mp3",volumen = 1)
 					alex.soltarObjeto()
 					objetoInventario.image("Minijuegos/vacio.png")
 					habitacionActual.minijuego().agregarVisual(objetoManipulable)
@@ -255,7 +257,7 @@ program juego{
 					if(!palancaActual.estaActiva()){						
 						palancaActual.activar()
 						sonidoActivacion.play()
-						sonidoActivacion = new Sonido(sonido = "sonidoActivacion.mp3",volumen = 0.5)
+						sonidoActivacion = new Sonido(sonido = "Audio/sonidoActivacion.mp3",volumen = 0.5)
 						habitacionActual.minijuego().recibirAccion(palancaActual)
 					}
 					if(habitacionActual.minijuego().estaEnEstadoCritico()){
@@ -275,7 +277,7 @@ program juego{
 			habitacionActual.minijuego().recibirAccion(unaPlacaSimon)
 			unaPlacaSimon.activar()
 			sonidoActivacion.play()
-			sonidoActivacion = new Sonido(sonido = "sonidoActivacion.mp3",volumen = 0.5)
+			sonidoActivacion = new Sonido(sonido = "Audio/sonidoActivacion.mp3",volumen = 0.5)
 			if(habitacionActual.minijuego().estaEnEstadoCritico()){
 						codigoAlexRecibeDanio.apply()
 			}
